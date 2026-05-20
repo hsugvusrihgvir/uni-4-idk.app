@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth, board_admin, boards, health, ideas, moderation, users, votings
+from app.api import auth, board_admin, boards, health, idea_ws, ideas, moderation, notifications, users, votings
 
 app  = FastAPI(title="idk.app API", version="0.1.0")
 
@@ -25,5 +25,7 @@ app.include_router(users.router)
 app.include_router(boards.router)
 app.include_router(board_admin.router)
 app.include_router(ideas.router)
+app.include_router(idea_ws.router)
 app.include_router(moderation.router)
+app.include_router(notifications.router)
 app.include_router(votings.router)
