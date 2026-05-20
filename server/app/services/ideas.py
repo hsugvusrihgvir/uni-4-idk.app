@@ -1,4 +1,4 @@
-from uuid import UUID
+﻿from uuid import UUID
 
 from sqlalchemy.orm import Session
 
@@ -59,7 +59,7 @@ class IdeasService:
         if idea is None:
             raise ValueError("Idea not found")
 
-        if idea.id_user != current_user.id:
+        if idea.user_id != current_user.id:
             raise PermissionError("Only author can delete idea")
 
         self.q_ideas.delete(idea)
@@ -81,7 +81,7 @@ class IdeasService:
         if idea is None:
             raise ValueError("Idea not found")
 
-        member = self.q_boards.get_member(board_id=idea.id_board, user_id=current_user.id)
+        member = self.q_boards.get_member(board_id=idea.board_id, user_id=current_user.id)
 
         if member is None:
             raise ValueError("Board not found")

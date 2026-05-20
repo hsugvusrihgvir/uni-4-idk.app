@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+﻿from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
 from sqlalchemy import delete, select
@@ -132,7 +132,7 @@ def seed_boards(db: Session):
     ]
 
     for key, board, user, role in members:
-        add(db, UserBoard, key, id_board=ids[board], id_user=ids[user], id_role=ids[role])
+        add(db, UserBoard, key, board_id=ids[board], user_id=ids[user], role_id=ids[role])
 
     db.flush()
 
@@ -145,14 +145,14 @@ def seed_ideas(db: Session):
     ]
 
     for key, board, user, st, title, desc, anon in ideas:
-        add(db, Idea, key, id_board=ids[board], id_user=ids[user], id_status=ids[st], title=title, description=desc, is_anonymous=anon)
+        add(db, Idea, key, board_id=ids[board], user_id=ids[user], status_id=ids[st], title=title, description=desc, is_anonymous=anon)
 
     db.flush()
 
 
 def seed_votings(db: Session):
-    add(db, Voting, "voting_1", id_type=ids["yes_no"], id_board=ids["board_1"])
-    add(db, Voting, "voting_2", id_type=ids["like"], id_board=ids["board_2"])
+    add(db, Voting, "voting_1", type_id=ids["yes_no"], board_id=ids["board_1"])
+    add(db, Voting, "voting_2", type_id=ids["like"], board_id=ids["board_2"])
 
     votes = [
         ("vote_1", "user_2", "voting_1", "idea_1"),
@@ -160,7 +160,7 @@ def seed_votings(db: Session):
     ]
 
     for key, user, voting, idea in votes:
-        add(db, Vote, key, id_user=ids[user], id_voting=ids[voting], id_idea=ids[idea])
+        add(db, Vote, key, user_id=ids[user], voting_id=ids[voting], idea_id=ids[idea])
 
     db.flush()
 
@@ -168,14 +168,14 @@ def seed_votings(db: Session):
 def seed_messages(db: Session):
     now = datetime.now(timezone.utc)
 
-    add(db, Notification, "notif_1", text="\u0412\u0430\u0441 \u0434\u043e\u0431\u0430\u0432\u0438\u043b\u0438 \u043d\u0430 \u0434\u043e\u0441\u043a\u0443.", id_user=ids["user_3"], id_board=ids["board_1"])
-    add(db, Notification, "notif_2", text="\u041d\u043e\u0432\u0430\u044f \u0438\u0434\u0435\u044f \u043e\u0436\u0438\u0434\u0430\u0435\u0442 \u043c\u043e\u0434\u0435\u0440\u0430\u0446\u0438\u0438.", id_user=ids["user_2"], id_board=ids["board_1"])
+    add(db, Notification, "notif_1", text="\u0412\u0430\u0441 \u0434\u043e\u0431\u0430\u0432\u0438\u043b\u0438 \u043d\u0430 \u0434\u043e\u0441\u043a\u0443.", user_id=ids["user_3"], board_id=ids["board_1"])
+    add(db, Notification, "notif_2", text="\u041d\u043e\u0432\u0430\u044f \u0438\u0434\u0435\u044f \u043e\u0436\u0438\u0434\u0430\u0435\u0442 \u043c\u043e\u0434\u0435\u0440\u0430\u0446\u0438\u0438.", user_id=ids["user_2"], board_id=ids["board_1"])
 
     add(db, EmailCode, "email_code_1", email="dasha@example.com", code="123456", expires_at=now + timedelta(minutes=10), is_used=False)
     add(db, EmailCode, "email_code_2", email="masha@example.com", code="654321", expires_at=now - timedelta(minutes=10), is_used=True)
 
-    add(db, TgCode, "tg_code_1", id_user=ids["user_1"], code="111111", expires_at=now + timedelta(minutes=10), is_used=False)
-    add(db, TgCode, "tg_code_2", id_user=ids["user_2"], code="222222", expires_at=now - timedelta(minutes=10), is_used=True)
+    add(db, TgCode, "tg_code_1", user_id=ids["user_1"], code="111111", expires_at=now + timedelta(minutes=10), is_used=False)
+    add(db, TgCode, "tg_code_2", user_id=ids["user_2"], code="222222", expires_at=now - timedelta(minutes=10), is_used=True)
 
     db.flush()
 

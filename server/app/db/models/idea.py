@@ -1,4 +1,4 @@
-from datetime import datetime
+﻿from datetime import datetime
 import uuid
 from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
@@ -10,21 +10,21 @@ from app.db.models.base import Base
 class Idea(Base):
     __tablename__ = "ideas"
 
-    # поля
+    # РїРѕР»СЏ
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
     )
-    id_board: Mapped[uuid.UUID] = mapped_column(
+    board_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("boards.id", ondelete="CASCADE"),
         nullable=False,
     )
-    id_user: Mapped[uuid.UUID] = mapped_column(
+    user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
     )
-    id_status: Mapped[uuid.UUID] = mapped_column(
+    status_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("idea_statuses.id"),
         nullable=False,
     )
@@ -38,7 +38,7 @@ class Idea(Base):
         server_default=func.now(),
     )
 
-    # связи------------------------
+    # СЃРІСЏР·Рё------------------------
     board = relationship("Board", back_populates="ideas")
     user = relationship("User", back_populates="ideas")
     idea_status = relationship("IdeaStatus", back_populates="ideas")

@@ -1,4 +1,4 @@
-from uuid import UUID
+﻿from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
@@ -26,7 +26,7 @@ class VotingsQueries:
 
     def create(self, *, board_id: UUID, type: str) -> Voting:
         t = self.get_or_create_type(type=type)
-        voting = Voting(id_board=board_id, id_type=t.id, voting_type=t)
+        voting = Voting(board_id=board_id, type_id=t.id, voting_type=t)
 
         self.db.add(voting)
         self.db.flush()
@@ -46,7 +46,7 @@ class VotingsQueries:
         stmt = (
             select(Voting)
             .options(selectinload(Voting.voting_type))
-            .where(Voting.id_board == board_id)
+            .where(Voting.board_id == board_id)
             .order_by(Voting.created_at.desc())
         )
         return list(self.db.execute(stmt).scalars().all())
@@ -59,16 +59,16 @@ class VotingsQueries:
         stmt = (
             select(Vote)
             .where(
-                Vote.id_user == user_id,
-                Vote.id_voting == voting_id,
-                Vote.id_idea == idea_id,
+                Vote.user_id == user_id,
+                Vote.voting_id == voting_id,
+                Vote.idea_id == idea_id,
             )
             .limit(1)
         )
         return self.db.execute(stmt).scalar_one_or_none()
 
     def create_vote(self, *, user_id: UUID, voting_id: UUID, idea_id: UUID) -> Vote:
-        vote = Vote(id_user=user_id, id_voting=voting_id, id_idea=idea_id)
+        vote = Vote(user_id=user_id, voting_id=voting_id, idea_id=idea_id)
 
         self.db.add(vote)
         self.db.flush()
@@ -79,6 +79,6 @@ class VotingsQueries:
         stmt = (
             select(Vote)
             .options(selectinload(Vote.idea).selectinload(Idea.idea_status))
-            .where(Vote.id_voting == voting_id)
+            .where(Vote.voting_id == voting_id)
         )
         return list(self.db.execute(stmt).scalars().all())

@@ -1,4 +1,4 @@
-from uuid import UUID
+﻿from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
@@ -39,7 +39,7 @@ class BoardsQueries:
     ) -> BoardMember:
         r = self.get_or_create_role(role=role)
 
-        member = BoardMember(id_board=board_id, id_user=user_id, id_role=r.id, user_role=r)
+        member = BoardMember(board_id=board_id, user_id=user_id, role_id=r.id, user_role=r)
 
         self.db.add(member)
         self.db.flush()
@@ -65,8 +65,8 @@ class BoardsQueries:
             select(BoardMember)
             .options(selectinload(BoardMember.board), selectinload(BoardMember.user_role))
             .where(
-                BoardMember.id_board == board_id,
-                BoardMember.id_user == user_id,
+                BoardMember.board_id == board_id,
+                BoardMember.user_id == user_id,
             )
             .limit(1)
         )
@@ -79,7 +79,7 @@ class BoardsQueries:
                 selectinload(BoardMember.board),
                 selectinload(BoardMember.user_role),
             )
-            .where(BoardMember.id_user == user_id)
+            .where(BoardMember.user_id == user_id)
             .order_by(BoardMember.created_at.desc())
         )
         return list(self.db.execute(stmt).scalars().all())
@@ -94,8 +94,8 @@ class BoardsQueries:
                 selectinload(BoardMember.user_role),
             )
             .where(
-                BoardMember.id_board == board_id,
-                BoardMember.id_user == user_id,
+                BoardMember.board_id == board_id,
+                BoardMember.user_id == user_id,
             )
             .limit(1)
         )
@@ -133,13 +133,13 @@ class BoardsQueries:
                 selectinload(BoardMember.user),
                 selectinload(BoardMember.user_role),
             )
-            .where(BoardMember.id_board == board_id)
+            .where(BoardMember.board_id == board_id)
         )
         return list(self.db.execute(stmt).scalars().all())
 
     def update_member_role(self, *, member: BoardMember, role: str) -> BoardMember:
         r = self.get_or_create_role(role=role)
-        member.id_role = r.id
+        member.role_id = r.id
         member.user_role = r
 
         self.db.flush()

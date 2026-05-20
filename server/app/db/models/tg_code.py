@@ -1,4 +1,4 @@
-from datetime import datetime
+﻿from datetime import datetime
 import uuid
 from sqlalchemy import Boolean, DateTime, ForeignKey, Index, String, func
 from sqlalchemy.dialects.postgresql import UUID
@@ -10,13 +10,13 @@ from app.db.models.base import Base
 class TgCode(Base):
     __tablename__ = "tg_codes"
 
-    # поля
+    # РїРѕР»СЏ
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
     )
-    id_user: Mapped[uuid.UUID] = mapped_column(
+    user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
     )
@@ -37,9 +37,9 @@ class TgCode(Base):
         server_default=func.now(),
     )
 
-    # связи
+    # СЃРІСЏР·Рё
     user = relationship("User", back_populates="tg_codes")
 
 
-Index("idx_tg_codes_id_user", TgCode.id_user)
+Index("idx_tg_codes_user_id", TgCode.user_id)
 Index("idx_tg_codes_expires_at", TgCode.expires_at)

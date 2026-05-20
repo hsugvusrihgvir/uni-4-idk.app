@@ -1,4 +1,4 @@
-from datetime import datetime
+﻿from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, constr
 class IdeaCreateRequest(BaseModel):
     title: constr(max_length=255)
     description: str | None = None
-    id_board: UUID
+    board_id: UUID
     is_anonymous: bool = False
 
 
@@ -16,7 +16,7 @@ class IdeaResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
-    id_board: UUID
+    board_id: UUID
     title: str
     description: str | None
     status: str

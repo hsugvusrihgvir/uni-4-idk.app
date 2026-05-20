@@ -1,4 +1,4 @@
-from datetime import datetime
+﻿from datetime import datetime
 import uuid
 from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID
@@ -10,17 +10,17 @@ from app.db.models.base import Base
 class Voting(Base):
     __tablename__ = "votings"
 
-    # поля
+    # РїРѕР»СЏ
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
     )
-    id_type: Mapped[uuid.UUID] = mapped_column(
+    type_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("voting_types.id"),
         nullable=False,
     )
-    id_board: Mapped[uuid.UUID] = mapped_column(
+    board_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("boards.id", ondelete="CASCADE"),
         nullable=False,
     )
@@ -31,7 +31,7 @@ class Voting(Base):
         server_default=func.now(),
     )
 
-    # связи
+    # СЃРІСЏР·Рё
     voting_type = relationship("VotingType", back_populates="votings")
     board = relationship("Board", back_populates="votings")
 

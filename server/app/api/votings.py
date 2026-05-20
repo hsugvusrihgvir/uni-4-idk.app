@@ -1,4 +1,4 @@
-from uuid import UUID
+﻿from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -22,7 +22,7 @@ router = APIRouter(tags=["Votings"])
 def voting_response(voting):
     return VotingResponse(
         id=voting.id,
-        id_board=voting.id_board,
+        board_id=voting.board_id,
         type=voting.voting_type.type,
         created_at=voting.created_at,
     )

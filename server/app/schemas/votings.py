@@ -1,4 +1,4 @@
-from datetime import datetime
+﻿from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
@@ -13,7 +13,7 @@ class VotingResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
-    id_board: UUID
+    board_id: UUID
     type: str
     created_at: datetime
 
@@ -31,8 +31,8 @@ class VoteResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
-    id_voting: UUID
-    id_idea: UUID
+    voting_id: UUID
+    idea_id: UUID
     created_at: datetime
 
 

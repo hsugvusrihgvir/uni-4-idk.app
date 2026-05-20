@@ -1,4 +1,4 @@
-from uuid import UUID
+﻿from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
@@ -23,9 +23,9 @@ class IdeasQueries:
         st = self.get_or_create_status(status=status)
 
         idea = Idea(
-            id_board=board_id,
-            id_user=user_id,
-            id_status=st.id,
+            board_id=board_id,
+            user_id=user_id,
+            status_id=st.id,
             idea_status=st,
             title=title,
             description=description,
@@ -55,7 +55,7 @@ class IdeasQueries:
         stmt = (
             select(Idea)
             .options(selectinload(Idea.idea_status))
-            .where(Idea.id_board == board_id)
+            .where(Idea.board_id == board_id)
             .order_by(Idea.created_at.desc())
         )
         return list(self.db.execute(stmt).scalars().all())
@@ -66,7 +66,7 @@ class IdeasQueries:
             .join(IdeaStatus)
             .options(selectinload(Idea.idea_status))
             .where(
-                Idea.id_board == board_id,
+                Idea.board_id == board_id,
                 IdeaStatus.status == status,
             )
             .order_by(Idea.created_at.desc())
@@ -83,7 +83,7 @@ class IdeasQueries:
 
     def update_status(self, *, idea: Idea, status: str) -> Idea:
         st = self.get_or_create_status(status=status)
-        idea.id_status = st.id
+        idea.status_id = st.id
         idea.idea_status = st
 
         self.db.flush()

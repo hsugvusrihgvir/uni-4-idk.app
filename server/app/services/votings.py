@@ -1,4 +1,4 @@
-from uuid import UUID
+﻿from uuid import UUID
 
 from sqlalchemy.orm import Session
 
@@ -45,7 +45,7 @@ class VotingsService:
         if voting is None:
             raise ValueError("Voting not found")
 
-        member = self.q_boards.get_member(board_id=voting.id_board, user_id=current_user.id)
+        member = self.q_boards.get_member(board_id=voting.board_id, user_id=current_user.id)
 
         if member is None:
             raise ValueError("Board not found")
@@ -61,7 +61,7 @@ class VotingsService:
         if voting is None:
             raise ValueError("Voting not found")
 
-        member = self.q_boards.get_member(board_id=voting.id_board, user_id=current_user.id)
+        member = self.q_boards.get_member(board_id=voting.board_id, user_id=current_user.id)
 
         if member is None:
             raise PermissionError("Only board member can vote")
@@ -71,7 +71,7 @@ class VotingsService:
         if idea is None:
             raise ValueError("Idea not found")
 
-        if idea.id_board != voting.id_board:
+        if idea.board_id != voting.board_id:
             raise ValueError("Idea does not belong to voting board")
 
         if idea.status != "approved":
@@ -90,7 +90,7 @@ class VotingsService:
         if voting is None:
             raise ValueError("Voting not found")
 
-        member = self.q_boards.get_member(board_id=voting.id_board, user_id=current_user.id)
+        member = self.q_boards.get_member(board_id=voting.board_id, user_id=current_user.id)
 
         if member is None:
             raise PermissionError("Only board member can view results")
@@ -100,15 +100,15 @@ class VotingsService:
         result = {}
 
         for vote in votes:
-            if vote.id_idea not in result:
-                result[vote.id_idea] = {
-                    "idea_id": vote.id_idea,
+            if vote.idea_id not in result:
+                result[vote.idea_id] = {
+                    "idea_id": vote.idea_id,
                     "title": vote.idea.title,
                     "votes_count": 0,
                     "approval_percent": 0,
                 }
 
-            result[vote.id_idea]["votes_count"] += 1
+            result[vote.idea_id]["votes_count"] += 1
 
         for item in result.values():
             item["approval_percent"] = round(item["votes_count"] / total * 100) if total else 0
