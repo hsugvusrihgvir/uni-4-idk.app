@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, constr
@@ -46,3 +47,31 @@ class BoardDetailResponse(BaseModel):
     moderation: bool
     created_at: datetime
     ideas: list[IdeaItemResponse]
+
+
+class BoardUpdateRequest(BaseModel):
+    title: constr(max_length=255) | None = None
+    description: str | None = None
+    moderation: bool | None = None
+    anon_ideas: bool | None = None
+
+
+class BoardMemberCreateRequest(BaseModel):
+    username: constr(max_length=50, min_length=3)
+    role: Literal["admin", "moderator", "member"] = "member"
+
+
+class BoardMemberRoleRequest(BaseModel):
+    role: Literal["admin", "moderator", "member"]
+
+
+class BoardMemberResponse(BaseModel):
+    id: UUID
+    username: str
+    name: str | None
+    photo_url: str | None
+    role: str
+
+
+class BoardMembersListResponse(BaseModel):
+    items: list[BoardMemberResponse]

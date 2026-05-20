@@ -104,3 +104,47 @@ class BoardsQueries:
     def delete(self, board: Board) -> None:
         self.db.delete(board)
         self.db.flush()
+
+    def update(
+        self,
+        *,
+        board: Board,
+        title: str | None,
+        description: str | None,
+        moderation: bool | None,
+        anon_ideas: bool | None,
+    ) -> Board:
+        if title is not None:
+            board.title = title
+        if description is not None:
+            board.description = description
+        if moderation is not None:
+            board.moderation = moderation
+        if anon_ideas is not None:
+            board.anon_ideas = anon_ideas
+
+        self.db.flush()
+        return board
+
+    def get_members(self, *, board_id: UUID) -> list[BoardMember]:
+        stmt = (
+            select(BoardMember)
+            .options(
+                selectinload(BoardMember.user),
+                selectinload(BoardMember.user_role),
+            )
+            .where(BoardMember.id_board == board_id)
+        )
+        return list(self.db.execute(stmt).scalars().all())
+
+    def update_member_role(self, *, member: BoardMember, role: str) -> BoardMember:
+        r = self.get_or_create_role(role=role)
+        member.id_role = r.id
+        member.user_role = r
+
+        self.db.flush()
+        return member
+
+    def delete_member(self, member: BoardMember) -> None:
+        self.db.delete(member)
+        self.db.flush()
