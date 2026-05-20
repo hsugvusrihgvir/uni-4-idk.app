@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue'
+﻿import { computed, reactive } from 'vue'
 import { defaultState } from './defaultState.js'
 import { saveTokens, clearTokens } from '../utils/storage.js'
 import { setAccessToken } from '../api/http.js'
@@ -48,7 +48,7 @@ function mapBoard(board) {
 function mapIdea(idea, boardId) {
   return {
     id: idea.id,
-    boardId: idea.id_board || idea.board_id || boardId,
+    boardId: idea.board_id || boardId,
     title: idea.title,
     description: idea.description,
     status: idea.status,
@@ -193,7 +193,7 @@ export function useAppStore() {
 
   async function createIdea(boardId, payload) {
     const data = await ideasApi.createIdea({
-      id_board: boardId,
+      board_id: boardId,
       title: payload.title,
       description: payload.description,
       is_anonymous: payload.isAnonymous,
