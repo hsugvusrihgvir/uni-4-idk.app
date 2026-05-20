@@ -63,3 +63,30 @@ class IdeasService:
             raise PermissionError("Only author can delete idea")
 
         self.q_ideas.delete(idea)
+
+    def get_moderation(self, *, current_user: User, board_id: UUID) -> list[Idea]:
+        member = self.q_boards.get_member(board_id=board_id, user_id=current_user.id)
+
+        if member is None:
+            raise ValueError("Board not found")
+
+        if member.role not in {"admin", "moderator"}:
+            raise PermissionError("Only moderator can view moderation")
+
+        return self.q_ideas.get_by_board_and_status(board_id=board_id, status="pending")
+
+    def update_status(self, *, current_user: User, idea_id: UUID, status: str) -> Idea:
+        idea = self.q_ideas.get_by_id(idea_id=idea_id)
+
+        if idea is None:
+            raise ValueError("Idea not found")
+
+        member = self.q_boards.get_member(board_id=idea.id_board, user_id=current_user.id)
+
+        if member is None:
+            raise ValueError("Board not found")
+
+        if member.role not in {"admin", "moderator"}:
+            raise PermissionError("Only moderator can change idea status")
+
+        return self.q_ideas.update_status(idea=idea, status=status)

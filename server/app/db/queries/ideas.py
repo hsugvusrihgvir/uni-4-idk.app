@@ -60,6 +60,19 @@ class IdeasQueries:
         )
         return list(self.db.execute(stmt).scalars().all())
 
+    def get_by_board_and_status(self, *, board_id: UUID, status: str) -> list[Idea]:
+        stmt = (
+            select(Idea)
+            .join(IdeaStatus)
+            .options(selectinload(Idea.idea_status))
+            .where(
+                Idea.id_board == board_id,
+                IdeaStatus.status == status,
+            )
+            .order_by(Idea.created_at.desc())
+        )
+        return list(self.db.execute(stmt).scalars().all())
+
     def get_by_id(self, *, idea_id: UUID) -> Idea | None:
         stmt = select(Idea).where(Idea.id == idea_id).limit(1)
         return self.db.execute(stmt).scalar_one_or_none()
@@ -67,3 +80,11 @@ class IdeasQueries:
     def delete(self, idea: Idea) -> None:
         self.db.delete(idea)
         self.db.flush()
+
+    def update_status(self, *, idea: Idea, status: str) -> Idea:
+        st = self.get_or_create_status(status=status)
+        idea.id_status = st.id
+        idea.idea_status = st
+
+        self.db.flush()
+        return idea

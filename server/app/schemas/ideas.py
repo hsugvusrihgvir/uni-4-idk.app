@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, constr
@@ -34,3 +35,8 @@ class IdeaItemResponse(BaseModel):
 
 class IdeasListResponse(BaseModel):
     items: list[IdeaResponse]
+
+
+class IdeaStatusUpdateRequest(BaseModel):
+    status: Literal["pending", "approved", "rejected"]
+    rejection_reason: str | None = None
