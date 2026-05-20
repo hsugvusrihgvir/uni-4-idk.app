@@ -162,6 +162,11 @@ p {
   gap: 16px;
 }
 
+.auth-card {
+  min-height: 440px;
+  justify-content: center;
+}
+
 .eyebrow {
   color: var(--pink-strong);
   font-weight: 900;
@@ -623,7 +628,7 @@ textarea {
     background: url('/src/assets/1.jpg') center / cover no-repeat;
     width: 100%;
     aspect-ratio: 16 / 10;
-    min-height: 0;
+    min-height: 440px;
     padding: 0;
 }
 

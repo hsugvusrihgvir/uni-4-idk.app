@@ -16,11 +16,18 @@ export async function request(path, options = {}) {
     ...options.headers,
   }
 
-  const response = await fetch(`${API_URL}${path}`, { ...options, headers })
-  const data = response.status === 204 ? null : await response.json()
+  let response
+
+  try {
+    response = await fetch(`${API_URL}${path}`, { ...options, headers })
+  } catch {
+    throw new Error('Сейчас не получается связаться с сервисом. Попробуйте еще раз чуть позже.')
+  }
+
+  const data = response.status === 204 ? null : await response.json().catch(() => null)
 
   if (!response.ok) {
-    throw new Error(data?.detail || data?.message || 'Request failed')
+    throw new Error(data?.detail || data?.message || 'Ошибка запроса')
   }
 
   return data
