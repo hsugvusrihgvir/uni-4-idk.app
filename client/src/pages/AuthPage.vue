@@ -4,12 +4,12 @@
       <p></p>
     </section>
 
-    <AuthForm @submit="$emit('login', $event)" />
+    <AuthForm @authenticated="$emit('authenticated')" />
   </main>
 </template>
 
 <script setup>
 import AuthForm from '../features/auth/AuthForm.vue'
 
-defineEmits(['login'])
+defineEmits(['authenticated'])
 </script>

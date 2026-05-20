@@ -1,28 +1,30 @@
 <template>
-  <AppModal title="Предложить идею" label="новая идея" @close="$emit('close')">
-    <form class="modal-form" @submit.prevent="submit">
+  <AppModal title="РџСЂРµРґР»РѕР¶РёС‚СЊ РёРґРµСЋ" label="РЅРѕРІР°СЏ РёРґРµСЏ" @close="$emit('close')">
+    <form class="modal-form" novalidate @submit.prevent="submit">
+      <p v-if="error" class="form-message error">{{ error }}</p>
+
       <label class="field">
-        Название
-        <input v-model="form.title" placeholder="Идея 1" required />
+        РќР°Р·РІР°РЅРёРµ
+        <input v-model.trim="form.title" placeholder="РРґРµСЏ 1" />
       </label>
 
       <label class="field">
-        Описание
-        <textarea v-model="form.description" placeholder="Описание идеи" required></textarea>
+        РћРїРёСЃР°РЅРёРµ
+        <textarea v-model.trim="form.description" placeholder="РћРїРёСЃР°РЅРёРµ РёРґРµРё"></textarea>
       </label>
 
       <label v-if="allowAnonymous" class="checkbox-field">
         <input v-model="form.isAnonymous" type="checkbox" />
-        отправить анонимно
+        РѕС‚РїСЂР°РІРёС‚СЊ Р°РЅРѕРЅРёРјРЅРѕ
       </label>
 
-      <button class="button primary">Отправить</button>
+      <button class="button primary">РћС‚РїСЂР°РІРёС‚СЊ</button>
     </form>
   </AppModal>
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import AppModal from '../../components/ui/AppModal.vue'
 
 defineProps({
@@ -31,6 +33,7 @@ defineProps({
 
 const emit = defineEmits(['close', 'save'])
 
+const error = ref('')
 const form = reactive({
   title: '',
   description: '',
@@ -38,6 +41,17 @@ const form = reactive({
 })
 
 function submit() {
+  if (!form.title) {
+    error.value = 'Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ РёРґРµРё.'
+    return
+  }
+
+  if (!form.description) {
+    error.value = 'Р’РІРµРґРёС‚Рµ РѕРїРёСЃР°РЅРёРµ РёРґРµРё.'
+    return
+  }
+
+  error.value = ''
   emit('save', { ...form })
 }
 </script>

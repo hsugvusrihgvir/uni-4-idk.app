@@ -1,18 +1,9 @@
-export const STORAGE_KEY = 'aura-board-clean-state-v1'
-
-export function loadState(defaultState) {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : structuredClone(defaultState)
-  } catch {
-    return structuredClone(defaultState)
-  }
+export function saveTokens({ accessToken, refreshToken }) {
+  if (accessToken) localStorage.setItem('access_token', accessToken)
+  if (refreshToken) localStorage.setItem('refresh_token', refreshToken)
 }
 
-export function saveState(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-}
-
-export function resetState() {
-  localStorage.removeItem(STORAGE_KEY)
+export function clearTokens() {
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('refresh_token')
 }

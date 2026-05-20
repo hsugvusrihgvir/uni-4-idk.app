@@ -1,8 +1,8 @@
 <template>
-  <article class="idea-card">
+  <article class="idea-card" @click="$emit('open', idea)">
     <div class="idea-header">
       <h3>{{ idea.title }}</h3>
-      <span class="idea-score">✦</span>
+      <span class="idea-score">вњ¦</span>
     </div>
 
     <div class="idea-main">
@@ -10,28 +10,21 @@
     </div>
 
     <div class="idea-meta">
-      <span>{{ idea.date }}</span>
-      <span>{{ idea.isAnonymous ? 'анонимно' : idea.author }}</span>
+      <span>{{ idea.createdAt || idea.date }}</span>
+      <span>{{ idea.isAnonymous ? 'Р°РЅРѕРЅРёРјРЅРѕ' : idea.author }}</span>
     </div>
 
     <div class="idea-footer">
-      <button class="text-danger">удалить</button>
+      <button v-if="canDelete" class="text-danger" @click.stop="$emit('remove', idea.id)">СѓРґР°Р»РёС‚СЊ</button>
     </div>
   </article>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-
-const props = defineProps({
+defineProps({
   idea: { type: Object, required: true },
   canDelete: { type: Boolean, default: true },
 })
 
 defineEmits(['open', 'remove'])
-
-const percent = computed(() => {
-  const total = props.idea.votesYes + props.idea.votesNo
-  return total ? Math.round((props.idea.votesYes / total) * 100) : 0
-})
 </script>

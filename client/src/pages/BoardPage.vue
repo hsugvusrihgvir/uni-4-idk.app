@@ -125,7 +125,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import IdeasSection from '../features/ideas/IdeasSection.vue'
 import IdeaFormModal from '../features/ideas/IdeaFormModal.vue'
 import IdeaDetailsModal from '../features/ideas/IdeaDetailsModal.vue'
@@ -140,7 +140,7 @@ import AiSummaryModal from '../features/ai/AiSummaryModal.vue'
 import { useAppStore } from '../store/useAppStore'
 
 const props = defineProps({
-  boardId: { type: Number, required: true },
+  boardId: { type: String, required: true },
 })
 
 defineEmits(['back'])
@@ -149,6 +149,8 @@ const {
   getBoard,
   getBoardIdeas,
   getVoteResults,
+  loadBoard,
+  loadIdeas,
   createIdea,
   deleteIdea,
   approveIdea,
@@ -188,8 +190,16 @@ const currentSectionTitle = computed(() =>
   sections.find((section) => section.id === activeSection.value)?.title || 'Доска'
 )
 
-function handleCreateIdea(payload) {
-  createIdea(props.boardId, payload)
+onMounted(loadData)
+watch(() => props.boardId, loadData)
+
+async function loadData() {
+  await loadBoard(props.boardId)
+  await loadIdeas(props.boardId)
+}
+
+async function handleCreateIdea(payload) {
+  await createIdea(props.boardId, payload)
   showIdeaModal.value = false
 }
 

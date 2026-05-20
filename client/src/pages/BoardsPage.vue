@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import BoardCard from '../features/boards/BoardCard.vue'
 import BoardFormModal from '../features/boards/BoardFormModal.vue'
 import NotificationsPanel from '../features/boards/NotificationsPanel.vue'
@@ -58,7 +58,7 @@ import { useAppStore } from '../store/useAppStore'
 
 defineEmits(['open-board', 'logout'])
 
-const { boards, createBoard, deleteBoard, getBoardIdeas, resetAll } = useAppStore()
+const { boards, loadBoards, createBoard, deleteBoard, getBoardIdeas } = useAppStore()
 
 const search = ref('')
 const showCreateModal = ref(false)
@@ -70,8 +70,10 @@ const filteredBoards = computed(() =>
   )
 )
 
-function handleCreateBoard(payload) {
-  createBoard(payload)
+onMounted(loadBoards)
+
+async function handleCreateBoard(payload) {
+  await createBoard(payload)
   showCreateModal.value = false
 }
 </script>

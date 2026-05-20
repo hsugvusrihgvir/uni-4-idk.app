@@ -54,7 +54,7 @@ import { ref } from 'vue'
 
 defineProps({
   members: { type: Array, default: () => [] },
-  boardId: { type: Number, required: true },
+  boardId: { type: String, required: true },
 })
 
 const emit = defineEmits(['add', 'remove', 'role'])
