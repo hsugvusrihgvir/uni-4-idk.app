@@ -169,8 +169,8 @@ export function useAppStore() {
     Object.assign(board, payload)
   }
 
-  function deleteBoard(boardId) {
-    notReady('DELETE /api/v1/boards/{board_id}')
+  async function deleteBoard(boardId) {
+    await boardsApi.deleteBoard(boardId)
     state.boards = state.boards.filter((board) => board.id !== boardId)
     state.ideas = state.ideas.filter((idea) => idea.boardId !== boardId)
   }
@@ -204,8 +204,8 @@ export function useAppStore() {
     return idea
   }
 
-  function deleteIdea(ideaId) {
-    notReady('DELETE /api/v1/ideas/{idea_id}')
+  async function deleteIdea(ideaId) {
+    await ideasApi.deleteIdea(ideaId)
     state.ideas = state.ideas.filter((idea) => idea.id !== ideaId)
   }
 
