@@ -90,6 +90,26 @@ def get_board(
     )
 
 
+@router.delete("/{board_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_board(
+    board_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    try:
+        BoardsService(db).delete(current_user=current_user, board_id=board_id)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        )
+    except PermissionError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+
+
 @router.get("/{board_id}/ideas", response_model=IdeasListResponse)
 def get_board_ideas(
     board_id: UUID,

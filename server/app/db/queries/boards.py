@@ -100,3 +100,7 @@ class BoardsQueries:
             .limit(1)
         )
         return self.db.execute(stmt).scalar_one_or_none()
+
+    def delete(self, board: Board) -> None:
+        self.db.delete(board)
+        self.db.flush()

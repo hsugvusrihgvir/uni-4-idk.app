@@ -40,3 +40,14 @@ class BoardsService:
             raise ValueError("Board not found")
 
         return member
+
+    def delete(self, *, current_user: User, board_id: UUID) -> None:
+        member = self.q_boards.get_member(board_id=board_id, user_id=current_user.id)
+
+        if member is None:
+            raise ValueError("Board not found")
+
+        if member.role != "admin":
+            raise PermissionError("Only admin can delete board")
+
+        self.q_boards.delete(member.board)

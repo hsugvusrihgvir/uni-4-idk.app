@@ -52,3 +52,14 @@ class IdeasService:
             raise ValueError("Board not found")
 
         return self.q_ideas.get_by_board(board_id=board_id)
+
+    def delete(self, *, current_user: User, idea_id: UUID) -> None:
+        idea = self.q_ideas.get_by_id(idea_id=idea_id)
+
+        if idea is None:
+            raise ValueError("Idea not found")
+
+        if idea.id_user != current_user.id:
+            raise PermissionError("Only author can delete idea")
+
+        self.q_ideas.delete(idea)
