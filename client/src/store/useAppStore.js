@@ -11,6 +11,26 @@ import { notReady } from '../api/stubs.js'
 const state = reactive(structuredClone(defaultState))
 setAccessToken(state.auth.accessToken)
 
+const text = {
+  anonymous: '\u0430\u043d\u043e\u043d\u0438\u043c\u043d\u043e',
+  member: '\u0443\u0447\u0430\u0441\u0442\u043d\u0438\u043a',
+  requestError: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0437\u0430\u043f\u0440\u043e\u0441\u0430',
+  rejectReason: '\u041f\u0440\u0438\u0447\u0438\u043d\u0430 \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u0438\u044f',
+}
+
+function formatDate(value) {
+  if (!value) return ''
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(date)
+}
+
 function mapBoard(board) {
   return {
     id: board.id,
@@ -21,7 +41,7 @@ function mapBoard(board) {
     allowAnonymous: board.anon_ideas ?? true,
     autoApprove: board.moderation === undefined ? false : !board.moderation,
     members: board.members || [],
-    createdAt: board.created_at,
+    createdAt: formatDate(board.created_at),
   }
 }
 
@@ -33,8 +53,8 @@ function mapIdea(idea, boardId) {
     description: idea.description,
     status: idea.status,
     isAnonymous: idea.is_anonymous ?? false,
-    author: idea.is_anonymous ? 'анонимно' : 'участник',
-    createdAt: idea.created_at,
+    author: idea.is_anonymous ? text.anonymous : text.member,
+    createdAt: formatDate(idea.created_at),
     votesYes: idea.votesYes || 0,
     votesNo: idea.votesNo || 0,
     rejectionReason: idea.rejectionReason || '',
@@ -42,7 +62,7 @@ function mapIdea(idea, boardId) {
 }
 
 function setError(error) {
-  state.error = error?.message || 'Ошибка запроса'
+  state.error = error?.message || text.requestError
 }
 
 export function useAppStore() {
@@ -202,7 +222,7 @@ export function useAppStore() {
     const idea = state.ideas.find((item) => item.id === ideaId)
     if (!idea) return
     idea.status = 'rejected'
-    idea.rejectionReason = reason || 'Причина отклонения'
+    idea.rejectionReason = reason || text.rejectReason
   }
 
   function voteIdea(ideaId, type) {

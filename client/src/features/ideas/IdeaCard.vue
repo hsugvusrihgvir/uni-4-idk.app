@@ -2,7 +2,7 @@
   <article class="idea-card" @click="$emit('open', idea)">
     <div class="idea-header">
       <h3>{{ idea.title }}</h3>
-      <span class="idea-score">вњ¦</span>
+      <span class="idea-score">{{ ui.star }}</span>
     </div>
 
     <div class="idea-main">
@@ -11,11 +11,13 @@
 
     <div class="idea-meta">
       <span>{{ idea.createdAt || idea.date }}</span>
-      <span>{{ idea.isAnonymous ? 'Р°РЅРѕРЅРёРјРЅРѕ' : idea.author }}</span>
+      <span>{{ idea.isAnonymous ? ui.anonymous : idea.author }}</span>
     </div>
 
     <div class="idea-footer">
-      <button v-if="canDelete" class="text-danger" @click.stop="$emit('remove', idea.id)">СѓРґР°Р»РёС‚СЊ</button>
+      <button v-if="canDelete" class="text-danger" @click.stop="$emit('remove', idea.id)">
+        {{ ui.delete }}
+      </button>
     </div>
   </article>
 </template>
@@ -27,4 +29,10 @@ defineProps({
 })
 
 defineEmits(['open', 'remove'])
+
+const ui = {
+  star: '\u2726',
+  anonymous: '\u0430\u043d\u043e\u043d\u0438\u043c\u043d\u043e',
+  delete: '\u0443\u0434\u0430\u043b\u0438\u0442\u044c',
+}
 </script>
