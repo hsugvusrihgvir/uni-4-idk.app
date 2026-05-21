@@ -10,7 +10,7 @@ from app.db.models.base import Base
 class TgCode(Base):
     __tablename__ = "tg_codes"
 
-    # РїРѕР»СЏ
+    # поля
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -37,7 +37,7 @@ class TgCode(Base):
         server_default=func.now(),
     )
 
-    # СЃРІСЏР·Рё
+    # связи
     user = relationship("User", back_populates="tg_codes")
 
 

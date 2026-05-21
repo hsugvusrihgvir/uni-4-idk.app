@@ -10,7 +10,7 @@ from app.db.models.base import Base
 class Voting(Base):
     __tablename__ = "votings"
 
-    # РїРѕР»СЏ
+    # поля
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -31,7 +31,7 @@ class Voting(Base):
         server_default=func.now(),
     )
 
-    # СЃРІСЏР·Рё
+    # связи
     voting_type = relationship("VotingType", back_populates="votings")
     board = relationship("Board", back_populates="votings")
 

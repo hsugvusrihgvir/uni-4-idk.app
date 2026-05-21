@@ -11,7 +11,7 @@ class Vote(Base):
     __tablename__ = "votes"
     __table_args__ = (UniqueConstraint("user_id", "voting_id", "idea_id", name="uq_vote"),)
 
-    # РїРѕР»СЏ
+    # поля
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -36,7 +36,7 @@ class Vote(Base):
         server_default=func.now(),
     )
 
-    # СЃРІСЏР·Рё
+    # связи
     user = relationship("User", back_populates="votes")
     voting = relationship("Voting", back_populates="votes")
     idea = relationship("Idea", back_populates="votes")

@@ -11,7 +11,7 @@ class UserBoard(Base):
     __tablename__ = "user_boards"
     __table_args__ = (UniqueConstraint("board_id", "user_id", name="uq_user_board"),)
 
-    # РїРѕР»СЏ
+    # поля
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -36,7 +36,7 @@ class UserBoard(Base):
         server_default=func.now(),
     )
 
-    # СЃРІСЏР·Рё
+    # связи
     board = relationship("Board", back_populates="members")
     user = relationship("User", back_populates="boards")
     user_role = relationship("UserRole", back_populates="user_boards")
