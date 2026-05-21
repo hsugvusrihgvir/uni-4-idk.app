@@ -7,17 +7,17 @@ export function login(email) {
   })
 }
 
-export function register(payload) {
+export function register(data) {
   return request('/api/v1/auth/register', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: JSON.stringify(data),
   })
 }
 
-export function verify(payload) {
+export function verify(data) {
   return request('/api/v1/auth/verify', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: JSON.stringify(data),
   })
 }
 

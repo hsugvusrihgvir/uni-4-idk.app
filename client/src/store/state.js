@@ -1,4 +1,4 @@
-export const defaultState = {
+export const baseState = {
   auth: {
     user: null,
     accessToken: localStorage.getItem('access_token') || '',
@@ -6,6 +6,10 @@ export const defaultState = {
   },
   boards: [],
   ideas: [],
+  votings: {},
+  voteResults: {},
+  notifications: [],
+  ws: {},
   loading: false,
   error: '',
 }

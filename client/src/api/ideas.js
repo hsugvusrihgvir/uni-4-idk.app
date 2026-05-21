@@ -1,14 +1,25 @@
 import { request } from './http.js'
 
-export function createIdea(payload) {
+export function createIdea(data) {
   return request('/api/v1/ideas', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: JSON.stringify(data),
   })
 }
 
 export function getBoardIdeas(boardId) {
   return request(`/api/v1/boards/${boardId}/ideas`)
+}
+
+export function getModerationIdeas(boardId) {
+  return request(`/api/v1/boards/${boardId}/ideas/moderation`)
+}
+
+export function updateIdeaStatus(ideaId, data) {
+  return request(`/api/v1/ideas/${ideaId}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  })
 }
 
 export function deleteIdea(ideaId) {

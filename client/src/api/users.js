@@ -8,9 +8,9 @@ export function getMe() {
   return request('/api/v1/users/me')
 }
 
-export function updateMe(payload) {
+export function updateMe(data) {
   return request('/api/v1/users/me', {
     method: 'PATCH',
-    body: JSON.stringify(payload),
+    body: JSON.stringify(data),
   })
 }
