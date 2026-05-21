@@ -254,6 +254,45 @@ textarea {
   width: auto;
 }
 
+.avatar-upload {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar-upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.avatar-preview {
+  width: 68px;
+  height: 68px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--pink), var(--orange));
+  color: white;
+  font-size: 26px;
+  font-weight: 900;
+  box-shadow: var(--shadow-soft);
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.file-button {
+  width: fit-content;
+}
+
 .button,
 .round-button,
 .text-danger {
@@ -542,6 +581,13 @@ textarea {
   background: linear-gradient(135deg, var(--pink), var(--orange));
   color: white;
   font-weight: 900;
+  overflow: hidden;
+}
+
+.member-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .member-info {
@@ -755,6 +801,16 @@ textarea {
 
   .inline-form {
     flex-direction: column;
+  }
+
+  .avatar-upload {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .file-button {
+    width: 100%;
+    text-align: center;
   }
 
   .invite-panel {
