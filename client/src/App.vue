@@ -1,43 +1,43 @@
 <template>
   <div class="app-shell">
-    <DecorBackground />
+    <Bg />
 
-    <AuthPage v-if="currentPage === 'auth'" @authenticated="currentPage = 'boards'" />
+    <Auth v-if="page === 'auth'" @authenticated="page = 'boards'" />
 
-    <BoardsPage
-      v-else-if="currentPage === 'boards'"
+    <Boards
+      v-else-if="page === 'boards'"
       @open-board="openBoard"
-      @logout="handleLogout"
+      @logout="exit"
     />
 
-    <BoardPage
+    <Board
       v-else
-      :board-id="activeBoardId"
-      @back="currentPage = 'boards'"
+      :board-id="boardId"
+      @back="page = 'boards'"
     />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import DecorBackground from './components/ui/DecorBackground.vue'
-import AuthPage from './pages/AuthPage.vue'
-import BoardsPage from './pages/BoardsPage.vue'
-import BoardPage from './pages/BoardPage.vue'
-import { useAppStore } from './store/useAppStore'
+import Bg from './components/ui/Bg.vue'
+import Auth from './pages/Auth.vue'
+import Boards from './pages/Boards.vue'
+import Board from './pages/Board.vue'
+import { useStore } from './store/store'
 
-const { logout } = useAppStore()
+const { logout } = useStore()
 
-const currentPage = ref('auth')
-const activeBoardId = ref(null)
+const page = ref('auth')
+const boardId = ref(null)
 
-function openBoard(boardId) {
-  activeBoardId.value = boardId
-  currentPage.value = 'board'
+function openBoard(id) {
+  boardId.value = id
+  page.value = 'board'
 }
 
-function handleLogout() {
+function exit() {
   logout()
-  currentPage.value = 'auth'
+  page.value = 'auth'
 }
 </script>

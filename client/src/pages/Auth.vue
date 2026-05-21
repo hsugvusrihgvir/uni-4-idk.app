@@ -4,12 +4,12 @@
       <p></p>
     </section>
 
-    <AuthForm @authenticated="$emit('authenticated')" />
+    <AuthBox @authenticated="$emit('authenticated')" />
   </main>
 </template>
 
 <script setup>
-import AuthForm from '../features/auth/AuthForm.vue'
+import AuthBox from '../features/auth/Auth.vue'
 
 defineEmits(['authenticated'])
 </script>
