@@ -864,7 +864,6 @@ textarea {
     overflow: hidden;
 }
 
-/* верх */
 .idea-header {
     display: flex;
     justify-content: space-between;
@@ -884,13 +883,11 @@ textarea {
     border-radius: 999px;
 }
 
-/* текст */
 .idea-main p {
     font-size: 15px;
     line-height: 1.5;
 }
 
-/* мета (дата + автор) */
 .idea-meta {
     display: flex;
     justify-content: space-between;
@@ -898,12 +895,10 @@ textarea {
     color: var(--muted);
 }
 
-/* низ */
 .idea-footer {
     margin-top: auto;
 }
 
-/* ✨ декоративный элемент */
 .idea-card::after {
     content: "";
     position: absolute;
