@@ -24,6 +24,7 @@ html,
 body,
 #app {
   min-height: 100%;
+  min-width: 320px;
 }
 
 body {
@@ -114,7 +115,7 @@ p {
   max-width: 1120px;
   margin: 0 auto;
   display: grid;
-    grid-template-columns: minmax(360px, 1fr) minmax(320px, 460px);
+  grid-template-columns: minmax(360px, 1fr) minmax(320px, 460px);
   gap: 30px;
   align-items: center;
 }
@@ -135,13 +136,11 @@ p {
 .transfer-panel,
 .empty-state {
   border-radius: var(--radius-xl);
-
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(20px);
-
-    box-shadow:
-            0 10px 30px rgba(0, 0, 0, 0.05),
-            0 0 0 1px rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.4);
 }
 
 .mascot-panel {
@@ -450,6 +449,7 @@ textarea {
 
 .section-header {
   margin-bottom: 20px;
+  min-width: 0;
 }
 
 .small-input {
@@ -549,11 +549,35 @@ textarea {
   min-width: 0;
 }
 
+.member-info h3,
+.member-info p,
+.invite-panel h3,
+.invite-panel p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .inline-form {
   margin-bottom: 16px;
+  align-items: stretch;
 }
 
 .inline-form input {
+  flex: 1;
+  min-width: 0;
+}
+
+.inline-form .button {
+  flex: 0 0 auto;
+}
+
+.invite-panel {
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+.invite-panel > div:first-child {
+  min-width: 0;
   flex: 1;
 }
 
@@ -625,16 +649,47 @@ textarea {
 }
 
 .cat-bg {
-    background: url('/src/assets/1.jpg') center / cover no-repeat;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    min-height: 440px;
-    padding: 0;
+  background: url('/src/assets/1.jpg') center / cover no-repeat;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 440px;
+  padding: 0;
+}
+
+@media (max-width: 980px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    gap: 12px;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .sidebar-nav button {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  .mascot-panel,
+  .auth-card {
+    min-height: 360px;
+  }
 }
 
 @media (max-width: 720px) {
   .app-shell {
-    padding: 16px;
+    padding: 12px;
   }
 
   .topbar,
@@ -654,10 +709,71 @@ textarea {
     width: 100%;
   }
 
+  .auth-layout {
+    min-height: auto;
+    gap: 16px;
+  }
+
+  .mascot-panel {
+    min-height: 220px;
+    border-radius: 26px;
+  }
+
+  .auth-card {
+    min-height: auto;
+  }
+
+  .panel,
+  .auth-card,
+  .modal-card,
+  .sidebar-card,
+  .empty-state {
+    padding: 18px;
+    border-radius: 26px;
+  }
+
   .button,
   .text-danger {
     width: 100%;
     justify-content: center;
+  }
+
+  .inline-form {
+    flex-direction: column;
+  }
+
+  .invite-panel {
+    align-items: center;
+    text-align: center;
+  }
+
+  .qr-box {
+    width: 112px;
+    height: 112px;
+  }
+
+  .board-grid,
+  .idea-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .board-content {
+    max-width: none;
+  }
+
+  .board-stats {
+    flex-direction: column;
+  }
+
+  .board-stats div {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .board-decor {
+    opacity: .45;
+    right: 18px;
+    top: 72px;
   }
 
   .small-input {
@@ -666,7 +782,7 @@ textarea {
 
   .auth-card h1,
   .topbar h1 {
-    font-size: 38px;
+    font-size: 34px;
   }
 
   .notifications-panel {
@@ -679,46 +795,44 @@ textarea {
 }
 
 .page-hero {
-    background: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(18px);
-    padding: 26px;
-    margin-bottom: 28px;
-    box-shadow: 0 18px 45px rgba(201, 93, 128, 0.09);
-    position: relative;
-    margin-bottom: 28px;
-    padding-bottom: 20px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(18px);
+  padding: 26px;
+  margin-bottom: 28px;
+  box-shadow: 0 18px 45px rgba(201, 93, 128, 0.09);
+  position: relative;
+  padding-bottom: 20px;
 }
 
 .page-hero::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    border-bottom: 4px dashed rgba(255, 255, 255, 0.99);
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-bottom: 4px dashed rgba(255, 255, 255, 0.99);
 }
 
 .page-hero .topbar {
-    margin-bottom: 22px;
+  margin-bottom: 22px;
 }
 
 .page-hero .toolbar {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .board-card {
-    position: relative;
-    min-height: 260px;
-    padding: 26px;
-    text-align: left;
-    border: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 22px;
-    overflow: hidden;
-    transition: 0.18s ease;
+  position: relative;
+  min-height: 260px;
+  padding: 26px;
+  text-align: left;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 22px;
+  overflow: hidden;
+  transition: 0.18s ease;
 }
 
 .board-card-header {
@@ -908,4 +1022,93 @@ textarea {
     height: 120px;
     border-radius: 50%;
     background: rgba(255, 132, 183, 0.12);
+}
+
+@media (max-width: 720px) {
+  .page-hero {
+    padding: 18px;
+    border-radius: 26px;
+  }
+
+  .board-card {
+    min-height: 220px;
+    padding: 20px;
+  }
+
+  .board-card-header,
+  .idea-header,
+  .idea-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .board-content {
+    max-width: none;
+  }
+
+  .board-content h2 {
+    font-size: 26px;
+  }
+
+  .board-stats {
+    flex-direction: column;
+  }
+
+  .board-stats div {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .board-decor {
+    top: 72px;
+    right: 18px;
+    opacity: .35;
+  }
+
+  .invite-panel {
+    align-items: center;
+    text-align: center;
+  }
+
+  .invite-panel > div:first-child {
+    width: 100%;
+  }
+
+  .member-card {
+    align-items: center;
+    text-align: center;
+  }
+
+  .member-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .app-shell {
+    padding: 8px;
+  }
+
+  .auth-card h1,
+  .topbar h1 {
+    font-size: 30px;
+  }
+
+  .cat-bg {
+    min-height: 190px;
+  }
+
+  .panel,
+  .auth-card,
+  .modal-card,
+  .sidebar-card,
+  .empty-state {
+    padding: 16px;
+  }
+
+  input,
+  textarea,
+  select {
+    padding: 13px 15px;
+  }
 }
