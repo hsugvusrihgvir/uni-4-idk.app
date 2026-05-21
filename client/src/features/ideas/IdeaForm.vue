@@ -1,24 +1,24 @@
-<template>
-  <Modal title="РџСЂРµРґР»РѕР¶РёС‚СЊ РёРґРµСЋ" label="РЅРѕРІР°СЏ РёРґРµСЏ" @close="$emit('close')">
+﻿<template>
+  <Modal title="Предложить идею" label="новая идея" @close="$emit('close')">
     <form class="modal-form" novalidate @submit.prevent="submit">
       <p v-if="error" class="form-message error">{{ error }}</p>
 
       <label class="field">
-        РќР°Р·РІР°РЅРёРµ
-        <input v-model.trim="form.title" placeholder="РРґРµСЏ 1" />
+        Название
+        <input v-model.trim="form.title" placeholder="Идея 1" />
       </label>
 
       <label class="field">
-        РћРїРёСЃР°РЅРёРµ
-        <textarea v-model.trim="form.description" placeholder="РћРїРёСЃР°РЅРёРµ РёРґРµРё"></textarea>
+        Описание
+        <textarea v-model.trim="form.description" placeholder="Описание идеи"></textarea>
       </label>
 
       <label v-if="allowAnonymous" class="checkbox-field">
         <input v-model="form.isAnonymous" type="checkbox" />
-        РѕС‚РїСЂР°РІРёС‚СЊ Р°РЅРѕРЅРёРјРЅРѕ
+        отправить анонимно
       </label>
 
-      <button class="button primary">РћС‚РїСЂР°РІРёС‚СЊ</button>
+      <button class="button primary">Отправить</button>
     </form>
   </Modal>
 </template>
@@ -32,22 +32,17 @@ defineProps({
 })
 
 const emit = defineEmits(['close', 'save'])
-
 const error = ref('')
-const form = reactive({
-  title: '',
-  description: '',
-  isAnonymous: true,
-})
+const form = reactive({ title: '', description: '', isAnonymous: true })
 
 function submit() {
   if (!form.title) {
-    error.value = 'Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ РёРґРµРё.'
+    error.value = 'Введите название идеи.'
     return
   }
 
   if (!form.description) {
-    error.value = 'Р’РІРµРґРёС‚Рµ РѕРїРёСЃР°РЅРёРµ РёРґРµРё.'
+    error.value = 'Введите описание идеи.'
     return
   }
 

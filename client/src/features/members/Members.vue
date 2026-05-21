@@ -1,20 +1,20 @@
-<template>
+﻿<template>
   <section class="panel">
     <header class="section-header">
       <div>
-        <p class="eyebrow">СѓС‡Р°СЃС‚РЅРёРєРё</p>
-        <h2>РџСЂРёРіР»Р°С€РµРЅРёСЏ Рё СЂРѕР»Рё</h2>
+        <p class="eyebrow">участники</p>
+        <h2>Приглашения и роли</h2>
       </div>
     </header>
 
     <form class="inline-form" @submit.prevent="submit">
       <input v-model="username" placeholder="username" />
-      <button class="button primary">РїСЂРёРіР»Р°СЃРёС‚СЊ</button>
+      <button class="button primary">пригласить</button>
     </form>
 
     <section class="invite-panel">
       <div>
-        <h3>РЎСЃС‹Р»РєР° РїСЂРёРіР»Р°С€РµРЅРёСЏ</h3>
+        <h3>Ссылка приглашения</h3>
         <p>https://invite.local/board/{{ boardId }}</p>
       </div>
       <div class="qr-box">QR</div>
@@ -30,10 +30,10 @@
 
         <div class="member-actions">
           <button class="button ghost" :disabled="member.role === 'admin'" @click="$emit('role', member.id)">
-            СЂРѕР»СЊ
+            роль
           </button>
           <button class="text-danger" :disabled="member.role === 'admin'" @click="$emit('remove', member.id)">
-            СѓРґР°Р»РёС‚СЊ
+            удалить
           </button>
         </div>
       </article>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="modal-overlay" @click.self="$emit('close')">
     <section class="modal-card" :class="{ wide }">
       <header class="modal-header">

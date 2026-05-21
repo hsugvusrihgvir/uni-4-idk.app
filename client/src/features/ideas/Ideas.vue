@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section class="panel">
     <header class="section-header">
       <div>
@@ -39,7 +39,6 @@ const props = defineProps({
 defineEmits(['open', 'remove'])
 
 const search = ref('')
-
 const foundIdeas = computed(() =>
   props.ideas.filter((idea) =>
     `${idea.title} ${idea.description}`.toLowerCase().includes(search.value.toLowerCase())

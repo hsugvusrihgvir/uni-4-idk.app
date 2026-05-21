@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <main class="workspace">
     <aside class="sidebar">
       <button class="back-button" @click="$emit('back')">← доски</button>
@@ -29,11 +29,7 @@
         </div>
 
         <div class="topbar-actions">
-          <button
-            v-if="tab === 'ideas'"
-            class="button primary"
-            @click="ideaOpen = true"
-          >
+          <button v-if="tab === 'ideas'" class="button primary" @click="ideaOpen = true">
             предложить идею
           </button>
           <button class="button ghost" @click="exportOpen = true">экспорт txt</button>
@@ -99,11 +95,7 @@
       @save="saveIdea"
     />
 
-    <IdeaInfo
-      v-if="chosenIdea"
-      :idea="chosenIdea"
-      @close="chosenIdea = null"
-    />
+    <IdeaInfo v-if="chosenIdea" :idea="chosenIdea" @close="chosenIdea = null" />
 
     <RejectModal
       v-if="badIdea"
@@ -112,18 +104,8 @@
       @confirm="saveReject"
     />
 
-    <ExportModal
-      v-if="exportOpen"
-      :ideas="results"
-      @close="exportOpen = false"
-    />
-
-    <AiModal
-      v-if="aiOpen"
-      :ideas="results"
-      :board="board"
-      @close="aiOpen = false"
-    />
+    <ExportModal v-if="exportOpen" :ideas="results" @close="exportOpen = false" />
+    <AiModal v-if="aiOpen" :ideas="results" :board="board" @close="aiOpen = false" />
   </main>
 </template>
 
@@ -183,7 +165,7 @@ const sections = [
   { id: 'ideas', title: 'Идеи' },
   { id: 'voting', title: 'Голосование' },
   { id: 'moderation', title: 'Модерация' },
-  { id: 'rejected', title: 'Отклонённые' },
+  { id: 'rejected', title: 'Отклоненные' },
   { id: 'members', title: 'Участники' },
   { id: 'settings', title: 'Настройки' },
 ]
@@ -194,10 +176,7 @@ const okIdeas = computed(() => ideas.value.filter((idea) => idea.status === 'app
 const waitIdeas = computed(() => ideas.value.filter((idea) => idea.status === 'pending'))
 const badIdeas = computed(() => ideas.value.filter((idea) => idea.status === 'rejected'))
 const results = computed(() => getVoteResults(props.boardId))
-
-const tabTitle = computed(() =>
-  sections.find((section) => section.id === tab.value)?.title || 'Доска'
-)
+const tabTitle = computed(() => sections.find((section) => section.id === tab.value)?.title || 'Доска')
 
 onMounted(loadData)
 watch(() => props.boardId, loadData)

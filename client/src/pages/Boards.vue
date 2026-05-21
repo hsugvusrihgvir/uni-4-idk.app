@@ -1,20 +1,20 @@
-<template>
+﻿<template>
   <main class="page">
     <section class="page-hero">
       <header class="topbar">
         <div>
-          <p class="eyebrow"><h1>РјРѕРё РґРѕСЃРєРё</h1></p>
+          <p class="eyebrow"><h1>Мои доски</h1></p>
         </div>
 
         <div class="topbar-actions">
-          <button class="button ghost" @click="openNotifs">СѓРІРµРґРѕРјР»РµРЅРёСЏ</button>
-          <button class="button ghost" @click="$emit('logout')">РІС‹Р№С‚Рё</button>
-          <button class="button primary" @click="formOpen = true">СЃРѕР·РґР°С‚СЊ РґРѕСЃРєСѓ</button>
+          <button class="button ghost" @click="openNotifs">уведомления</button>
+          <button class="button ghost" @click="$emit('logout')">выйти</button>
+          <button class="button primary" @click="formOpen = true">создать доску</button>
         </div>
       </header>
 
       <section class="toolbar">
-        <input v-model="search" placeholder="РЅР°Р№С‚Рё РґРѕСЃРєСѓ" />
+        <input v-model="search" placeholder="найти доску" />
       </section>
     </section>
 
@@ -31,8 +31,8 @@
 
     <Empty
       v-if="!foundBoards.length"
-      title="Р”РѕСЃРѕРє РЅРµС‚"
-      text="РЎРѕР·РґР°Р№С‚Рµ РїРµСЂРІСѓСЋ РґРѕСЃРєСѓ РґР»СЏ СЃР±РѕСЂР° РёРґРµР№."
+      title="Досок нет"
+      text="Создайте первую доску для сбора идей."
     />
 
     <BoardForm v-if="formOpen" @close="formOpen = false" @save="saveBoard" />

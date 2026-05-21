@@ -1,20 +1,20 @@
-<template>
+﻿<template>
   <section class="panel">
     <header class="section-header">
       <div>
-        <p class="eyebrow">Р°РєС‚РёРІРЅРѕРµ РіРѕР»РѕСЃРѕРІР°РЅРёРµ</p>
-        <h2>{{ voting ? titleByType[voting.type] : 'Р“РѕР»РѕСЃРѕРІР°РЅРёРµ РЅРµ СЃРѕР·РґР°РЅРѕ' }}</h2>
+        <p class="eyebrow">активное голосование</p>
+        <h2>{{ voting ? names[voting.type] : 'Голосование не создано' }}</h2>
       </div>
 
       <div class="topbar-actions">
         <button v-if="!voting" class="button primary" @click="$emit('create', 'yes_no')">
-          СЃРѕР·РґР°С‚СЊ
+          создать
         </button>
         <button v-if="!voting" class="button ghost" @click="$emit('create', 'like')">
           like
         </button>
         <button v-if="voting" class="button ghost" @click="$emit('delete', voting.id)">
-          СѓРґР°Р»РёС‚СЊ
+          удалить
         </button>
       </div>
     </header>
@@ -27,20 +27,20 @@
         </div>
 
         <div class="vote-actions">
-          <button class="button ghost" @click="$emit('open', idea)">РѕС‚РєСЂС‹С‚СЊ</button>
-          <button class="button primary" @click="$emit('vote', idea.id)">РіРѕР»РѕСЃ</button>
+          <button class="button ghost" @click="$emit('open', idea)">открыть</button>
+          <button class="button primary" @click="$emit('vote', idea.id)">голос</button>
         </div>
       </article>
     </div>
 
     <Empty
       v-else
-      title="РќРµС‚ РёРґРµР№ РґР»СЏ РіРѕР»РѕСЃРѕРІР°РЅРёСЏ"
-      text="Р’ РіРѕР»РѕСЃРѕРІР°РЅРёРё СѓС‡Р°СЃС‚РІСѓСЋС‚ С‚РѕР»СЊРєРѕ РѕРґРѕР±СЂРµРЅРЅС‹Рµ РёРґРµРё."
+      title="Нет идей для голосования"
+      text="В голосовании участвуют только одобренные идеи."
     />
 
     <section class="results-panel">
-      <h3>Р РµР·СѓР»СЊС‚Р°С‚С‹</h3>
+      <h3>Результаты</h3>
 
       <button v-for="result in results" :key="result.id" class="result-row" @click="$emit('open', result)">
         <span>{{ result.title }}</span>
@@ -61,8 +61,8 @@ defineProps({
 
 defineEmits(['open', 'vote', 'create', 'delete'])
 
-const titleByType = {
-  like: 'Like-РіРѕР»РѕСЃРѕРІР°РЅРёРµ',
-  yes_no: 'Р“РѕР»РѕСЃРѕРІР°РЅРёРµ',
+const names = {
+  like: 'Like-голосование',
+  yes_no: 'Голосование',
 }
 </script>
