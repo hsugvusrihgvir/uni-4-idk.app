@@ -11,8 +11,7 @@ class IdeasQueries:
         self.db = db
 
     def create(
-        self,
-        *,
+        self, *,
         board_id: UUID,
         user_id: UUID,
         title: str,
@@ -26,11 +25,11 @@ class IdeasQueries:
             board_id=board_id,
             user_id=user_id,
             status_id=st.id,
-            idea_status=st,
             title=title,
             description=description,
             is_anonymous=is_anonymous,
         )
+        idea.idea_status = st
 
         self.db.add(idea)
         self.db.flush()

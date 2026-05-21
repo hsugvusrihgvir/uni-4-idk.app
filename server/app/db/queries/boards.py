@@ -1,5 +1,4 @@
 ﻿from uuid import UUID
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -10,14 +9,8 @@ class BoardsQueries:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def create(
-        self,
-        *,
-        title: str,
-        description: str | None,
-        moderation: bool,
-        anon_ideas: bool,
-    ) -> Board:
+    def create(self, *, title: str, description: str | None,
+               moderation: bool, anon_ideas: bool,) -> Board:
         board = Board(
             title=title,
             description=description,
@@ -31,15 +24,15 @@ class BoardsQueries:
         return board
 
     def add_member(
-        self,
-        *,
+        self, *,
         board_id: UUID,
         user_id: UUID,
         role: str,
     ) -> BoardMember:
         r = self.get_or_create_role(role=role)
 
-        member = BoardMember(board_id=board_id, user_id=user_id, role_id=r.id, user_role=r)
+        member = BoardMember(board_id=board_id, user_id=user_id, role_id=r.id)
+        member.user_role = r
 
         self.db.add(member)
         self.db.flush()

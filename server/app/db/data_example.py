@@ -3,6 +3,7 @@ from uuid import UUID
 
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 from app.db.models import (
     Base,
@@ -58,8 +59,9 @@ ids = {
 seed_ids = list(ids.values())
 
 
-def one(db: Session, model, field, value):
-    return db.execute(select(model).where(field == value).limit(1)).scalar_one_or_none()
+def one(db: Session, model, col: InstrumentedAttribute, value):
+    stmt = select(model).filter_by(**{col.key: value}).limit(1)
+    return db.execute(stmt).scalar_one_or_none()
 
 
 def add(db: Session, model, key: str, **data):

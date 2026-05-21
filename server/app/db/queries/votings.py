@@ -26,7 +26,8 @@ class VotingsQueries:
 
     def create(self, *, board_id: UUID, type: str) -> Voting:
         t = self.get_or_create_type(type=type)
-        voting = Voting(board_id=board_id, type_id=t.id, voting_type=t)
+        voting = Voting(board_id=board_id, type_id=t.id)
+        voting.voting_type = t
 
         self.db.add(voting)
         self.db.flush()

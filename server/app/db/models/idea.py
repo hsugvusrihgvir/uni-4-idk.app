@@ -10,7 +10,7 @@ from app.db.models.base import Base
 class Idea(Base):
     __tablename__ = "ideas"
 
-    # РїРѕР»СЏ
+    # поля
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -38,7 +38,7 @@ class Idea(Base):
         server_default=func.now(),
     )
 
-    # СЃРІСЏР·Рё------------------------
+    # связи
     board = relationship("Board", back_populates="ideas")
     user = relationship("User", back_populates="ideas")
     idea_status = relationship("IdeaStatus", back_populates="ideas")

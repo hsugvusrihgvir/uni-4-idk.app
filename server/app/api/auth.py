@@ -58,7 +58,7 @@ def register(body: AuthRegisterRequest, db: Session = Depends(get_db)):
 @router.post("/verify", response_model=AuthVerifyResponse)
 def verify(body: AuthVerifyRequest, db: Session = Depends(get_db)):
     try:
-        access_token, refresh_token, user = AuthService(db).verify(
+        access, refresh, user = AuthService(db).verify(
             email=body.email,
             code=body.code,
         )
@@ -69,8 +69,8 @@ def verify(body: AuthVerifyRequest, db: Session = Depends(get_db)):
         )
 
     return AuthVerifyResponse(
-        access_token=access_token,
-        refresh_token=refresh_token,
+        access_token=access,
+        refresh_token=refresh,
         user=AuthUserResponse.model_validate(user),
     )
 
@@ -78,11 +78,11 @@ def verify(body: AuthVerifyRequest, db: Session = Depends(get_db)):
 @router.post("/refresh", response_model=AuthRefreshResponse)
 def refresh(body: AuthRefreshRequest, db: Session = Depends(get_db)):
     try:
-        access_token = AuthService(db).refresh(refresh_token=body.refresh_token)
+        access = AuthService(db).refresh(refresh_token=body.refresh_token)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e),
         )
 
-    return AuthRefreshResponse(access_token=access_token)
+    return AuthRefreshResponse(access_token=access)
