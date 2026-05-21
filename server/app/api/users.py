@@ -34,23 +34,18 @@ def check_username(
 
 
 @router.get("/me", response_model=UserMeResponse)
-def get_me(current_user: User = Depends(get_current_user)):
-    return UserMeResponse.model_validate(current_user)
+def get_me(cur: User = Depends(get_current_user)):
+    return UserMeResponse.model_validate(cur)
 
 
 @router.patch("/me", response_model=UserMeResponse)
 def update_me(
     body: UserMeUpdateRequest,
-    current_user: User = Depends(get_current_user),
+    cur: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     try:
-        user = UsersService(db).update_me(
-            current_user=current_user,
-            username=body.username,
-            name=body.name,
-            photo_url=body.photo_url,
-        )
+        user = UsersService(db).update_me(current_user=cur, username=body.username, name=body.name, photo_url=body.photo_url)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

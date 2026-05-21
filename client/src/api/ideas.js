@@ -16,3 +16,10 @@ export function deleteIdea(ideaId) {
     method: 'DELETE',
   })
 }
+
+export function getIdeasWsUrl(boardId, token) {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  const apiUrl = new URL(import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000')
+
+  return `${protocol}//${apiUrl.host}/api/v1/boards/${boardId}/ideas/ws?token=${encodeURIComponent(token)}`
+}

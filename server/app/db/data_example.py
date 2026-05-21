@@ -121,8 +121,20 @@ def seed_users(db: Session):
 
 
 def seed_boards(db: Session):
-    add(db, Board, "board_1", title="\u0414\u043e\u0441\u043a\u0430 1", description="\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0434\u043e\u0441\u043a\u0438 1", moderation=True, anon_ideas=True)
-    add(db, Board, "board_2", title="\u0414\u043e\u0441\u043a\u0430 2", description="\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0434\u043e\u0441\u043a\u0438 2", moderation=False, anon_ideas=True)
+    add(
+        db, Board, "board_1",
+        title="\u0414\u043e\u0441\u043a\u0430 1",
+        description="\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0434\u043e\u0441\u043a\u0438 1",
+        moderation=True,
+        anon_ideas=True,
+    )
+    add(
+        db, Board, "board_2",
+        title="\u0414\u043e\u0441\u043a\u0430 2",
+        description="\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0434\u043e\u0441\u043a\u0438 2",
+        moderation=False,
+        anon_ideas=True,
+    )
 
     members = [
         ("ub_1", "board_1", "user_1", "admin"),
@@ -139,13 +151,36 @@ def seed_boards(db: Session):
 
 def seed_ideas(db: Session):
     ideas = [
-        ("idea_1", "board_1", "user_1", "approved", "\u0418\u0434\u0435\u044f 1", "\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0438\u0434\u0435\u0438 1", True),
-        ("idea_2", "board_1", "user_2", "pending", "\u0418\u0434\u0435\u044f 2", "\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0438\u0434\u0435\u0438 2", False),
-        ("idea_3", "board_2", "user_2", "approved", "\u0418\u0434\u0435\u044f 3", "\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0438\u0434\u0435\u0438 3", False),
+        (
+            "idea_1", "board_1", "user_1", "approved",
+            "\u0418\u0434\u0435\u044f 1",
+            "\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0438\u0434\u0435\u0438 1",
+            True,
+        ),
+        (
+            "idea_2", "board_1", "user_2", "pending",
+            "\u0418\u0434\u0435\u044f 2",
+            "\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0438\u0434\u0435\u0438 2",
+            False,
+        ),
+        (
+            "idea_3", "board_2", "user_2", "approved",
+            "\u0418\u0434\u0435\u044f 3",
+            "\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0438\u0434\u0435\u0438 3",
+            False,
+        ),
     ]
 
     for key, board, user, st, title, desc, anon in ideas:
-        add(db, Idea, key, board_id=ids[board], user_id=ids[user], status_id=ids[st], title=title, description=desc, is_anonymous=anon)
+        add(
+            db, Idea, key,
+            board_id=ids[board],
+            user_id=ids[user],
+            status_id=ids[st],
+            title=title,
+            description=desc,
+            is_anonymous=anon,
+        )
 
     db.flush()
 
@@ -168,11 +203,37 @@ def seed_votings(db: Session):
 def seed_messages(db: Session):
     now = datetime.now(timezone.utc)
 
-    add(db, Notification, "notif_1", text="\u0412\u0430\u0441 \u0434\u043e\u0431\u0430\u0432\u0438\u043b\u0438 \u043d\u0430 \u0434\u043e\u0441\u043a\u0443.", user_id=ids["user_3"], board_id=ids["board_1"])
-    add(db, Notification, "notif_2", text="\u041d\u043e\u0432\u0430\u044f \u0438\u0434\u0435\u044f \u043e\u0436\u0438\u0434\u0430\u0435\u0442 \u043c\u043e\u0434\u0435\u0440\u0430\u0446\u0438\u0438.", user_id=ids["user_2"], board_id=ids["board_1"])
+    add(
+        db, Notification, "notif_1",
+        text="\u0412\u0430\u0441 \u0434\u043e\u0431\u0430\u0432\u0438\u043b\u0438 \u043d\u0430 \u0434\u043e\u0441\u043a\u0443.",
+        user_id=ids["user_3"],
+        board_id=ids["board_1"],
+    )
+    add(
+        db, Notification, "notif_2",
+        text=(
+            "\u041d\u043e\u0432\u0430\u044f \u0438\u0434\u0435\u044f "
+            "\u043e\u0436\u0438\u0434\u0430\u0435\u0442 "
+            "\u043c\u043e\u0434\u0435\u0440\u0430\u0446\u0438\u0438."
+        ),
+        user_id=ids["user_2"],
+        board_id=ids["board_1"],
+    )
 
-    add(db, EmailCode, "email_code_1", email="dasha@example.com", code="123456", expires_at=now + timedelta(minutes=10), is_used=False)
-    add(db, EmailCode, "email_code_2", email="masha@example.com", code="654321", expires_at=now - timedelta(minutes=10), is_used=True)
+    add(
+        db, EmailCode, "email_code_1",
+        email="dasha@example.com",
+        code="123456",
+        expires_at=now + timedelta(minutes=10),
+        is_used=False,
+    )
+    add(
+        db, EmailCode, "email_code_2",
+        email="masha@example.com",
+        code="654321",
+        expires_at=now - timedelta(minutes=10),
+        is_used=True,
+    )
 
     add(db, TgCode, "tg_code_1", user_id=ids["user_1"], code="111111", expires_at=now + timedelta(minutes=10), is_used=False)
     add(db, TgCode, "tg_code_2", user_id=ids["user_2"], code="222222", expires_at=now - timedelta(minutes=10), is_used=True)
