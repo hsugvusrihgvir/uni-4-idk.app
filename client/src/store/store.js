@@ -68,7 +68,7 @@ function mapMember(member) {
     id: member.id,
     username: member.username,
     name: member.name || member.username,
-    photoUrl: member.photo_url,
+    photoUrl: users.fileUrl(member.photo_url),
     role: member.role,
   }
 }
@@ -154,6 +154,11 @@ export function useStore() {
   async function checkUsername(username) {
     const data = await users.checkUsername(username)
     return data.available
+  }
+
+  async function uploadAvatar(file) {
+    const data = await users.uploadAvatar(file)
+    return data.photo_url
   }
 
   function logout() {
@@ -416,6 +421,7 @@ export function useStore() {
     registerUser,
     verifyLogin,
     checkUsername,
+    uploadAvatar,
     logout,
     loadBoards,
     createBoard,

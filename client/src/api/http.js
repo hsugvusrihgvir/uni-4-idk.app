@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+﻿export const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
 
 let accessToken = localStorage.getItem('access_token') || ''
 
@@ -10,8 +10,9 @@ export function setAccessToken(token) {
 }
 
 export async function request(path, options = {}) {
+  const isForm = options.body instanceof FormData
   const headers = {
-    ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+    ...(options.body && !isForm ? { 'Content-Type': 'application/json' } : {}),
     ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     ...options.headers,
   }

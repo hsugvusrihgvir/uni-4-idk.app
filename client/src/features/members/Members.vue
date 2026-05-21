@@ -22,7 +22,10 @@
 
     <div class="row-list">
       <article v-for="member in members" :key="member.id" class="member-card">
-        <div class="member-avatar">{{ (member.name || member.username).slice(0, 1) }}</div>
+        <div class="member-avatar">
+          <img v-if="member.photoUrl" :src="member.photoUrl" alt="avatar" />
+          <span v-else>{{ (member.name || member.username).slice(0, 1) }}</span>
+        </div>
         <div class="member-info">
           <h3>{{ member.name || member.username }}</h3>
           <p>{{ member.username }} / {{ member.role }}</p>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <form class="auth-card" novalidate @submit.prevent="submit">
     <p class="eyebrow">idk.app</p>
     <h1>{{ title }}</h1>
@@ -33,7 +33,14 @@
 
       <label class="field">
         {{ ui.photo }}
-        <input v-model.trim="form.photo_url" placeholder="photo.png" />
+        <span class="avatar-upload">
+          <span class="avatar-preview">
+            <img v-if="avatarUrl" :src="avatarUrl" alt="avatar" />
+            <span v-else>{{ avatarLetter }}</span>
+          </span>
+          <span class="button ghost file-button">выбрать фото</span>
+          <input type="file" accept="image/png,image/jpeg,image/webp" @change="pickAvatar" />
+        </span>
       </label>
     </template>
 
@@ -61,52 +68,55 @@ import { computed, reactive, ref } from 'vue'
 import { useStore } from '../../store/store.js'
 
 const emit = defineEmits(['authenticated'])
-const { state, requestLogin, registerUser, verifyLogin, checkUsername } = useStore()
+const { state, requestLogin, registerUser, verifyLogin, checkUsername, uploadAvatar } = useStore()
 
 const step = ref('email')
 const error = ref('')
 const message = ref('')
 const usernameMessage = ref('')
+const avatar = ref(null)
+const avatarUrl = ref('')
 
 const ui = {
-  name: '\u0418\u043c\u044f',
-  photo: '\u0424\u043e\u0442\u043e',
-  code: '\u041a\u043e\u0434',
-  back: '\u043d\u0430\u0437\u0430\u0434',
+  name: 'Имя',
+  photo: 'Фото',
+  code: 'Код',
+  back: 'назад',
 }
 
 const text = {
-  enterEmail: '\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u0443\u044e \u043f\u043e\u0447\u0442\u0443, \u043d\u0430\u043f\u0440\u0438\u043c\u0435\u0440 name@example.com',
-  enterEmailShort: '\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u0443\u044e \u043f\u043e\u0447\u0442\u0443.',
-  codeSent: '\u041a\u043e\u0434 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d. \u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0435\u0433\u043e \u043d\u0438\u0436\u0435.',
+  enterEmail: 'Введите корректную почту, например name@example.com',
+  enterEmailShort: 'Введите корректную почту.',
+  codeSent: 'Код отправлен. Введите его ниже.',
   needRegister: 'Аккаунт не найден. Зарегистрируйтесь, чтобы продолжить.',
-  usernameShort: 'Username \u0434\u043e\u043b\u0436\u0435\u043d \u0431\u044b\u0442\u044c \u043d\u0435 \u043a\u043e\u0440\u043e\u0447\u0435 3 \u0441\u0438\u043c\u0432\u043e\u043b\u043e\u0432.',
-  usernameTaken: 'Username \u0443\u0436\u0435 \u0437\u0430\u043d\u044f\u0442.',
-  usernameFree: 'Username \u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d.',
-  registered: '\u0410\u043a\u043a\u0430\u0443\u043d\u0442 \u0441\u043e\u0437\u0434\u0430\u043d. \u041a\u043e\u0434 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d, \u0432\u0432\u0435\u0434\u0438\u0442\u0435 \u0435\u0433\u043e \u043d\u0438\u0436\u0435.',
-  enterCode: '\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u0434 \u0438\u0437 \u043f\u0438\u0441\u044c\u043c\u0430.',
+  usernameShort: 'Username должен быть не короче 3 символов.',
+  usernameTaken: 'Username уже занят.',
+  usernameFree: 'Username доступен.',
+  registered: 'Аккаунт создан. Код отправлен, введите его ниже.',
+  enterCode: 'Введите код из письма.',
+  badPhoto: 'Выберите картинку png, jpg или webp.',
 }
 
 const form = reactive({
   email: '',
   username: '',
   name: '',
-  photo_url: '',
   code: '',
 })
 
 const loading = computed(() => state.loading)
+const avatarLetter = computed(() => (form.name || form.username || '?').slice(0, 1).toUpperCase())
 const title = computed(() => {
-  if (step.value === 'register') return '\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f'
-  if (step.value === 'code') return '\u041a\u043e\u0434'
-  return '\u0412\u0445\u043e\u0434'
+  if (step.value === 'register') return 'Регистрация'
+  if (step.value === 'code') return 'Код'
+  return 'Вход'
 })
 
 const buttonText = computed(() => {
-  if (loading.value) return '\u0436\u0434\u0435\u043c...'
-  if (step.value === 'register') return '\u0417\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c\u0441\u044f'
-  if (step.value === 'code') return '\u0412\u043e\u0439\u0442\u0438'
-  return '\u0414\u0430\u043b\u044c\u0448\u0435'
+  if (loading.value) return 'ждем...'
+  if (step.value === 'register') return 'Зарегистрироваться'
+  if (step.value === 'code') return 'Войти'
+  return 'Дальше'
 })
 
 function isEmail(value) {
@@ -116,6 +126,49 @@ function isEmail(value) {
 function fail(value) {
   error.value = value
   message.value = ''
+}
+
+function imageFile(file) {
+  return file && ['image/jpeg', 'image/png', 'image/webp'].includes(file.type)
+}
+
+function readImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = reject
+    img.src = URL.createObjectURL(file)
+  })
+}
+
+async function resizeAvatar(file) {
+  const img = await readImage(file)
+  const size = Math.min(img.width, img.height)
+  const left = (img.width - size) / 2
+  const top = (img.height - size) / 2
+  const canvas = document.createElement('canvas')
+  canvas.width = 256
+  canvas.height = 256
+  canvas.getContext('2d').drawImage(img, left, top, size, size, 0, 0, 256, 256)
+
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => resolve(new File([blob], 'avatar.jpg', { type: 'image/jpeg' })), 'image/jpeg', 0.82)
+  })
+}
+
+async function pickAvatar(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+
+  if (!imageFile(file)) {
+    fail(text.badPhoto)
+    return
+  }
+
+  avatar.value = await resizeAvatar(file)
+  if (avatarUrl.value) URL.revokeObjectURL(avatarUrl.value)
+  avatarUrl.value = URL.createObjectURL(avatar.value)
+  error.value = ''
 }
 
 async function submit() {
@@ -168,11 +221,12 @@ async function submitRegister() {
       return
     }
 
+    const photoUrl = avatar.value ? await uploadAvatar(avatar.value) : null
     await registerUser({
       email: form.email,
       username: form.username,
       name: form.name || null,
-      photo_url: form.photo_url || null,
+      photo_url: photoUrl,
     })
 
     step.value = 'code'
