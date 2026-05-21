@@ -10,7 +10,7 @@ from app.db.models.base import Base
 class Notification(Base):
     __tablename__ = "notifications"
 
-    # РїРѕР»СЏ
+    # поля
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -32,6 +32,6 @@ class Notification(Base):
         server_default=func.now(),
     )
 
-    # СЃРІСЏР·Рё
+    # связи
     user = relationship("User", back_populates="notifications")
     board = relationship("Board", back_populates="notifications")
