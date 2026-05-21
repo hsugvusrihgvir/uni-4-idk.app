@@ -22,6 +22,12 @@ class NotificationsQueries:
         stmt = select(Notification).where(Notification.id == notification_id).limit(1)
         return self.db.execute(stmt).scalar_one_or_none()
 
+    def create(self, *, user_id: UUID, text: str, board_id: UUID | None = None) -> Notification:
+        notif = Notification(user_id=user_id, board_id=board_id, text=text)
+        self.db.add(notif)
+        self.db.flush()
+        return notif
+
     def delete(self, notification: Notification) -> None:
         self.db.delete(notification)
         self.db.flush()

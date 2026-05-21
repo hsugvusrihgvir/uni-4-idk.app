@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.db.models import Board, BoardMember, User
 from app.db.queries.boards import BoardsQueries
+from app.db.queries.notifications import NotificationsQueries
 from app.db.queries.users import UsersQueries
 
 
@@ -11,6 +12,7 @@ class BoardAdminService:
     def __init__(self, db: Session) -> None:
         self.q_b = BoardsQueries(db)
         self.q_u = UsersQueries(db)
+        self.q_n = NotificationsQueries(db)
 
     def update(
         self,
@@ -34,7 +36,7 @@ class BoardAdminService:
         return self.q_b.get_members(board_id=board_id)
 
     def add_member(self, *, cur: User, board_id: UUID, username: str, role: str) -> BoardMember:
-        self._admin(cur=cur, board_id=board_id, msg="Only admin can add members")
+        admin = self._admin(cur=cur, board_id=board_id, msg="Only admin can add members")
 
         user = self.q_u.get_by_username(username)
         if user is None:
@@ -43,7 +45,13 @@ class BoardAdminService:
         if self.q_b.get_member(board_id=board_id, user_id=user.id) is not None:
             raise ValueError("User already in board")
 
-        return self.q_b.add_member(board_id=board_id, user_id=user.id, role=role)
+        member = self.q_b.add_member(board_id=board_id, user_id=user.id, role=role)
+        self.q_n.create(
+            user_id=user.id,
+            board_id=board_id,
+            text=f"\u0412\u0430\u0441 \u043f\u0440\u0438\u0433\u043b\u0430\u0441\u0438\u043b\u0438 \u043d\u0430 \u0434\u043e\u0441\u043a\u0443 {admin.board.title}.",
+        )
+        return member
 
     def change_role(self, *, cur: User, board_id: UUID, user_id: UUID, role: str) -> BoardMember:
         self._admin(cur=cur, board_id=board_id, msg="Only admin can change roles")
