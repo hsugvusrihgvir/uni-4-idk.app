@@ -33,7 +33,7 @@
       </article>
     </div>
 
-    <EmptyState
+    <Empty
       v-else
       title="РќРµС‚ РёРґРµР№ РґР»СЏ РіРѕР»РѕСЃРѕРІР°РЅРёСЏ"
       text="Р’ РіРѕР»РѕСЃРѕРІР°РЅРёРё СѓС‡Р°СЃС‚РІСѓСЋС‚ С‚РѕР»СЊРєРѕ РѕРґРѕР±СЂРµРЅРЅС‹Рµ РёРґРµРё."
@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import EmptyState from '../../components/ui/EmptyState.vue'
+import Empty from '../../components/ui/Empty.vue'
 
 defineProps({
   ideas: { type: Array, default: () => [] },

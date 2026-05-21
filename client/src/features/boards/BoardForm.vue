@@ -1,5 +1,5 @@
 <template>
-  <AppModal title="РЎРѕР·РґР°С‚СЊ РґРѕСЃРєСѓ" label="РЅРѕРІР°СЏ РґРѕСЃРєР°" @close="$emit('close')">
+  <Modal title="РЎРѕР·РґР°С‚СЊ РґРѕСЃРєСѓ" label="РЅРѕРІР°СЏ РґРѕСЃРєР°" @close="$emit('close')">
     <form class="modal-form" novalidate @submit.prevent="submit">
       <p v-if="error" class="form-message error">{{ error }}</p>
 
@@ -15,12 +15,12 @@
 
       <button class="button primary">РЎРѕР·РґР°С‚СЊ</button>
     </form>
-  </AppModal>
+  </Modal>
 </template>
 
 <script setup>
 import { reactive, ref } from 'vue'
-import AppModal from '../../components/ui/AppModal.vue'
+import Modal from '../../components/ui/Modal.vue'
 
 const emit = defineEmits(['close', 'save'])
 

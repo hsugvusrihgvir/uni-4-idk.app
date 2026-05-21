@@ -21,7 +21,7 @@
       </article>
     </div>
 
-    <EmptyState
+    <Empty
       v-else
       title="Очередь пустая"
       text="Новые идеи появятся здесь, если выключено автоодобрение."
@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import EmptyState from '../../components/ui/EmptyState.vue'
+import Empty from '../../components/ui/Empty.vue'
 
 defineProps({
   ideas: { type: Array, default: () => [] },

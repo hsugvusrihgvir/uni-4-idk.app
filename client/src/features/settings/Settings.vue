@@ -40,7 +40,7 @@
       <h3>Передача прав администратора</h3>
       <p>Админ на доске всегда один.</p>
 
-      <select v-model.number="newAdminId">
+      <select v-model="newAdminId">
         <option v-for="member in board.members" :key="member.id" :value="member.id">
           {{ member.name }} — {{ member.role }}
         </option>
@@ -70,7 +70,7 @@ const form = reactive({
   autoApprove: props.board.autoApprove,
 })
 
-const newAdminId = ref(props.board.members.find((m) => m.role === 'Админ')?.id)
+const newAdminId = ref(props.board.members.find((m) => m.role === 'admin')?.id)
 
 watch(
   () => props.board,
@@ -80,7 +80,7 @@ watch(
     form.context = board.context
     form.allowAnonymous = board.allowAnonymous
     form.autoApprove = board.autoApprove
-    newAdminId.value = board.members.find((m) => m.role === 'Админ')?.id
+    newAdminId.value = board.members.find((m) => m.role === 'admin')?.id
   },
   { deep: true }
 )

@@ -1,5 +1,5 @@
 <template>
-  <AppModal title="ИИ-сводка" label="макет функции" wide @close="$emit('close')">
+  <Modal title="ИИ-сводка" label="макет функции" wide @close="$emit('close')">
     <div class="modal-form">
       <p class="muted">
         Это локальная имитация: выбранные идеи объединяются в один текст без запроса к API.
@@ -14,12 +14,12 @@
 
       <pre v-if="summary" class="summary-box">{{ summary }}</pre>
     </div>
-  </AppModal>
+  </Modal>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import AppModal from '../../components/ui/AppModal.vue'
+import Modal from '../../components/ui/Modal.vue'
 
 const props = defineProps({
   ideas: { type: Array, default: () => [] },

@@ -1,5 +1,5 @@
 <template>
-  <AppModal title="Экспорт идей" label="txt" @close="$emit('close')">
+  <Modal title="Экспорт идей" label="txt" @close="$emit('close')">
     <div class="modal-form">
       <label class="field">
         Минимальный процент одобрения
@@ -8,12 +8,12 @@
 
       <button class="button primary" @click="download">скачать файл</button>
     </div>
-  </AppModal>
+  </Modal>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import AppModal from '../../components/ui/AppModal.vue'
+import Modal from '../../components/ui/Modal.vue'
 
 const props = defineProps({
   ideas: { type: Array, default: () => [] },

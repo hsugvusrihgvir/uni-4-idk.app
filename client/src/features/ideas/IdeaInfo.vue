@@ -1,5 +1,5 @@
 <template>
-  <AppModal :title="idea.title" :label="ui.card" @close="$emit('close')">
+  <Modal :title="idea.title" :label="ui.card" @close="$emit('close')">
     <div class="idea-details">
       <p>{{ idea.description }}</p>
 
@@ -14,12 +14,12 @@
         {{ ui.reason }}: {{ idea.rejectionReason }}
       </p>
     </div>
-  </AppModal>
+  </Modal>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import AppModal from '../../components/ui/AppModal.vue'
+import Modal from '../../components/ui/Modal.vue'
 
 const props = defineProps({
   idea: { type: Object, required: true },
@@ -45,6 +45,8 @@ const statusLabel = computed(() => {
 })
 
 const approvalPercent = computed(() => {
+  if (props.idea.approvalPercent !== undefined) return props.idea.approvalPercent
+
   const total = props.idea.votesYes + props.idea.votesNo
   return total ? Math.round((props.idea.votesYes / total) * 100) : 0
 })

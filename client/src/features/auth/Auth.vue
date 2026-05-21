@@ -58,10 +58,10 @@
 
 <script setup>
 import { computed, reactive, ref } from 'vue'
-import { useAppStore } from '../../store/useAppStore.js'
+import { useStore } from '../../store/store.js'
 
 const emit = defineEmits(['authenticated'])
-const { state, requestLogin, registerUser, verifyLogin, checkUsername } = useAppStore()
+const { state, requestLogin, registerUser, verifyLogin, checkUsername } = useStore()
 
 const step = ref('email')
 const error = ref('')

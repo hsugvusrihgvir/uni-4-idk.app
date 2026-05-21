@@ -1,5 +1,5 @@
 <template>
-  <AppModal title="Отклонить идею" label="модерация" @close="$emit('close')">
+  <Modal title="Отклонить идею" label="модерация" @close="$emit('close')">
     <form class="modal-form" @submit.prevent="submit">
       <p class="muted">{{ idea.title }}</p>
 
@@ -10,12 +10,12 @@
 
       <button class="button primary">Не одобрить</button>
     </form>
-  </AppModal>
+  </Modal>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import AppModal from '../../components/ui/AppModal.vue'
+import Modal from '../../components/ui/Modal.vue'
 
 const props = defineProps({
   idea: { type: Object, required: true },

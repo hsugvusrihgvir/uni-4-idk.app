@@ -1,5 +1,5 @@
 <template>
-  <AppModal title="РџСЂРµРґР»РѕР¶РёС‚СЊ РёРґРµСЋ" label="РЅРѕРІР°СЏ РёРґРµСЏ" @close="$emit('close')">
+  <Modal title="РџСЂРµРґР»РѕР¶РёС‚СЊ РёРґРµСЋ" label="РЅРѕРІР°СЏ РёРґРµСЏ" @close="$emit('close')">
     <form class="modal-form" novalidate @submit.prevent="submit">
       <p v-if="error" class="form-message error">{{ error }}</p>
 
@@ -20,12 +20,12 @@
 
       <button class="button primary">РћС‚РїСЂР°РІРёС‚СЊ</button>
     </form>
-  </AppModal>
+  </Modal>
 </template>
 
 <script setup>
 import { reactive, ref } from 'vue'
-import AppModal from '../../components/ui/AppModal.vue'
+import Modal from '../../components/ui/Modal.vue'
 
 defineProps({
   allowAnonymous: { type: Boolean, default: true },

@@ -20,7 +20,7 @@
       </article>
     </div>
 
-    <EmptyState
+    <Empty
       v-else
       title="Отклонённых идей нет"
       text="Здесь будут идеи, которые модератор или админ не одобрили."
@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import EmptyState from '../../components/ui/EmptyState.vue'
+import Empty from '../../components/ui/Empty.vue'
 
 defineProps({
   ideas: { type: Array, default: () => [] },
