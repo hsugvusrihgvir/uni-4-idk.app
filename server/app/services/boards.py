@@ -1,12 +1,14 @@
 from sqlalchemy.orm import Session
 
-from app.db.queries.boards import BoardsQueries
 from app.db.models import Board, BoardMember, User
+from app.db.queries.boards import BoardsQueries
+from app.db.queries.notifications import NotificationsQueries
 
 
 class BoardsService:
     def __init__(self, db: Session) -> None:
         self.q_b = BoardsQueries(db)
+        self.q_n = NotificationsQueries(db)
 
     def create(
         self,
@@ -32,4 +34,22 @@ class BoardsService:
         if member is None:
             raise ValueError("Board not found")
 
+        return member
+
+    def join(self, *, current_user: User, board_id) -> BoardMember:
+        board = self.q_b.get_by_id(board_id=board_id)
+        if board is None:
+            raise ValueError("Board not found")
+
+        member = self.q_b.get_member(board_id=board_id, user_id=current_user.id)
+        if member is not None:
+            return member
+
+        member = self.q_b.add_member(board_id=board_id, user_id=current_user.id, role="member")
+        member.board = board
+        self.q_n.create(
+            user_id=current_user.id,
+            board_id=board_id,
+            text=f"\u0412\u044b \u043f\u0440\u0438\u0441\u043e\u0435\u0434\u0438\u043d\u0438\u043b\u0438\u0441\u044c \u043a \u0434\u043e\u0441\u043a\u0435 {board.title}.",
+        )
         return member
