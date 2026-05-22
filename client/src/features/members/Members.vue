@@ -15,9 +15,9 @@
     <section class="invite-panel">
       <div>
         <h3>Ссылка приглашения</h3>
-        <p>https://invite.local/board/{{ boardId }}</p>
+        <p>{{ inviteLink }}</p>
       </div>
-      <div class="qr-box">QR</div>
+      <img v-if="qrUrl" class="qr-box" :src="qrUrl" alt="qr invite" />
     </section>
 
     <div class="row-list">
@@ -45,15 +45,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
+import QRCode from 'qrcode'
 
-defineProps({
+const props = defineProps({
   members: { type: Array, default: () => [] },
   boardId: { type: String, required: true },
 })
 
 const emit = defineEmits(['add', 'remove', 'role'])
 const username = ref('')
+const qrUrl = ref('')
+const inviteLink = computed(() => `${window.location.origin}/invite/${props.boardId}`)
+
+watchEffect(async () => {
+  qrUrl.value = await QRCode.toDataURL(inviteLink.value, {
+    width: 180,
+    margin: 2,
+    color: {
+      dark: '#4d3140',
+      light: '#ffffff',
+    },
+  })
+})
 
 function submit() {
   emit('add', username.value)

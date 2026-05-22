@@ -195,6 +195,13 @@ export function useStore() {
     return board
   }
 
+  async function joinBoard(boardId) {
+    const data = await boardReq.joinBoard(boardId)
+    const board = mapBoard(data)
+    state.boards = [board, ...state.boards.filter((item) => item.id !== board.id)]
+    return board
+  }
+
   async function loadBoard(boardId) {
     const data = await boardReq.getBoard(boardId)
     const members = await boardReq.getMembers(boardId).catch(() => ({ items: [] }))
@@ -425,6 +432,7 @@ export function useStore() {
     logout,
     loadBoards,
     createBoard,
+    joinBoard,
     loadBoard,
     updateBoard,
     deleteBoard,

@@ -28,6 +28,12 @@ export function deleteBoard(boardId) {
   })
 }
 
+export function joinBoard(boardId) {
+  return request(`/api/v1/boards/${boardId}/join`, {
+    method: 'POST',
+  })
+}
+
 export function getMembers(boardId) {
   return request(`/api/v1/boards/${boardId}/members`)
 }

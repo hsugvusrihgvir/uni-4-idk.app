@@ -631,12 +631,10 @@ textarea {
   width: 96px;
   height: 96px;
   flex: 0 0 auto;
-  border-radius: 22px;
-  background:
-    linear-gradient(90deg, var(--pink-strong) 10px, transparent 10px) 0 0/24px 24px,
-    linear-gradient(var(--pink-strong) 10px, transparent 10px) 0 0/24px 24px,
-    rgba(255,255,255,.75);
-  color: transparent;
+  border-radius: 18px;
+  background: rgba(255,255,255,.75);
+  padding: 8px;
+  object-fit: contain;
 }
 
 .settings-grid {

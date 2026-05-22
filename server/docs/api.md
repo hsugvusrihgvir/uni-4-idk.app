@@ -169,6 +169,26 @@
   
 ---  
   
+
+### 2.4 `POST /api/v1/users/avatar`  
+**Кто:** Гость  
+Загрузить аватарку пользователя. Используется перед регистрацией, чтобы получить `photo_url`.
+
+**Body:** `multipart/form-data`  
+
+Поле:
+```text
+file: image/jpeg | image/png | image/webp
+```
+
+**Ответ:**
+```json
+{
+  "photo_url": "/uploads/avatars/avatar.jpg"
+}
+```
+
+---  
 ## 3) Boards  
   
 ### 3.1 `POST /api/v1/boards`  
@@ -280,6 +300,29 @@
   
 ---  
   
+
+### 3.6 `POST /api/v1/boards/{board_id}/join`  
+**Кто:** Пользователь  
+Присоединиться к доске по ссылке или QR-коду.  
+
+QR-код на фронте хранит ссылку вида:
+```text
+http://localhost:5173/invite/{board_id}
+```
+
+После входа фронт вызывает эту ручку. Если пользователь уже есть на доске, повторно он не добавляется.
+
+**Ответ:**
+```json
+{
+  "id": "uuid",
+  "title": "Board 1",
+  "description": "description",
+  "role": "member"
+}
+```
+
+---  
 ## 4) Ideas  
   
 ### 4.1 `POST /api/v1/ideas`  
