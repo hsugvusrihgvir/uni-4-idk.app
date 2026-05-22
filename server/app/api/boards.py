@@ -57,6 +57,21 @@ def get_board(board_id: UUID, cur: User = Depends(get_current_user), db: Session
     )
 
 
+@router.post("/{board_id}/join", response_model=BoardItemResponse)
+def join_board(board_id: UUID, cur: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    try:
+        member = BoardsService(db).join(current_user=cur, board_id=board_id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+    return BoardItemResponse(
+        id=member.board.id,
+        title=member.board.title,
+        description=member.board.description,
+        role=member.role,
+    )
+
+
 @router.get("/{board_id}/ideas", response_model=IdeasListResponse)
 def get_board_ideas(board_id: UUID, cur: User = Depends(get_current_user), db: Session = Depends(get_db)):
     try:

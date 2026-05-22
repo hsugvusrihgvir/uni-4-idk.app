@@ -94,6 +94,10 @@ class BoardsQueries:
         )
         return self.db.execute(stmt).scalar_one_or_none()
 
+    def get_by_id(self, *, board_id: UUID) -> Board | None:
+        stmt = select(Board).where(Board.id == board_id).limit(1)
+        return self.db.execute(stmt).scalar_one_or_none()
+
     def delete(self, board: Board) -> None:
         self.db.delete(board)
         self.db.flush()
