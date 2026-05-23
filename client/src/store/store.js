@@ -1,7 +1,7 @@
 import { computed, reactive } from 'vue'
 import { baseState } from './state.js'
 import { saveTokens, clearTokens } from '../utils/storage.js'
-import { setAccessToken } from '../api/http.js'
+import { setAccessToken, setAuthSessionHandlers } from '../api/http.js'
 import * as auth from '../api/auth.js'
 import * as users from '../api/users.js'
 import * as boardReq from '../api/boards.js'
@@ -11,6 +11,23 @@ import * as notifReq from '../api/notifications.js'
 
 const state = reactive(structuredClone(baseState))
 setAccessToken(state.auth.accessToken)
+setAuthSessionHandlers({
+  onRefresh: (token) => {
+    state.auth.accessToken = token
+  },
+  onExpired: () => {
+    Object.values(state.ws).forEach((ws) => ws?.close())
+    state.auth.user = null
+    state.auth.accessToken = ''
+    state.auth.refreshToken = ''
+    state.boards = []
+    state.ideas = []
+    state.votings = {}
+    state.voteResults = {}
+    state.notifications = []
+    state.ws = {}
+  },
+})
 
 const text = {
   anonymous: '\u0430\u043d\u043e\u043d\u0438\u043c\u043d\u043e',
