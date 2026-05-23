@@ -82,6 +82,15 @@ function mapNotif(notif) {
   }
 }
 
+function mapUser(user) {
+  if (!user) return null
+
+  return {
+    ...user,
+    photoUrl: users.fileUrl(user.photo_url),
+  }
+}
+
 function mapVoting(voting) {
   return {
     id: voting.id,
@@ -159,6 +168,22 @@ export function useStore() {
   async function uploadAvatar(file) {
     const data = await users.uploadAvatar(file)
     return data.photo_url
+  }
+
+  async function loadProfile() {
+    const user = await users.getMe()
+    state.auth.user = user
+    return mapUser(user)
+  }
+
+  async function updateProfile(form) {
+    const user = await users.updateMe({
+      username: form.username,
+      name: form.name || null,
+      photo_url: form.photo_url || null,
+    })
+    state.auth.user = user
+    return mapUser(user)
   }
 
   function logout() {
@@ -429,6 +454,8 @@ export function useStore() {
     verifyLogin,
     checkUsername,
     uploadAvatar,
+    loadProfile,
+    updateProfile,
     logout,
     loadBoards,
     createBoard,

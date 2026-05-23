@@ -590,6 +590,49 @@ textarea {
   object-fit: cover;
 }
 
+.small-avatar {
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+.profile-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-head .file-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-head .file-button input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.profile-avatar {
+  width: 86px;
+  height: 86px;
+  font-size: 32px;
+}
+
 .member-info {
   flex: 1;
   min-width: 0;
