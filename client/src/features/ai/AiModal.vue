@@ -1,48 +1,24 @@
 <template>
-  <Modal title="ИИ-сводка" label="макет функции" wide @close="$emit('close')">
-    <div class="modal-form">
-      <p class="muted">
-        Это локальная имитация: выбранные идеи объединяются в один текст без запроса к API.
+  <Modal title="ИИ-сводка" label="в разработке" wide @close="$emit('close')">
+    <section class="empty-state">
+      <p class="eyebrow">скоро</p>
+      <h2>Функция в разработке</h2>
+      <p>
+        Здесь появится ИИ-сводка по идеям доски: краткие выводы, общие темы и
+        предложения по следующим шагам.
       </p>
-
-      <label class="field">
-        Минимальный процент одобрения
-        <input v-model.number="threshold" type="number" min="0" max="100" />
-      </label>
-
-      <button class="button primary" @click="generate">собрать текст</button>
-
-      <pre v-if="summary" class="summary-box">{{ summary }}</pre>
-    </div>
+      <button class="button primary" type="button" @click="$emit('close')">понятно</button>
+    </section>
   </Modal>
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import Modal from '../../components/ui/Modal.vue'
 
-const props = defineProps({
+defineProps({
   ideas: { type: Array, default: () => [] },
   board: { type: Object, required: true },
 })
 
 defineEmits(['close'])
-
-const threshold = ref(50)
-const summary = ref('')
-
-function generate() {
-  const selected = props.ideas.filter((idea) => idea.approvalPercent >= threshold.value)
-  if (!selected.length) {
-    summary.value = 'Нет идей, подходящих под выбранный порог.'
-    return
-  }
-
-  summary.value = [
-    `Контекст: ${props.board.context || props.board.description}`,
-    '',
-    'Итоговый текст:',
-    selected.map((idea) => idea.description).join(' '),
-  ].join('\n')
-}
 </script>

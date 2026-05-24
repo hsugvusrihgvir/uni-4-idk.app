@@ -32,7 +32,7 @@
           <button v-if="tab === 'ideas'" class="button primary" @click="ideaOpen = true">
             предложить идею
           </button>
-          <button class="button ghost" @click="exportOpen = true">экспорт txt</button>
+          <button class="button ghost" @click="exportOpen = true">экспорт отчета</button>
           <button class="button ghost" @click="aiOpen = true">ии-сводка</button>
         </div>
       </header>
@@ -104,7 +104,7 @@
       @confirm="saveReject"
     />
 
-    <ExportModal v-if="exportOpen" :ideas="results" @close="exportOpen = false" />
+    <ExportModal v-if="exportOpen" :ideas="results" :board="board" @close="exportOpen = false" />
     <AiModal v-if="aiOpen" :ideas="results" :board="board" @close="aiOpen = false" />
   </main>
 </template>
