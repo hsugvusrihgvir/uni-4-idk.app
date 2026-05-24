@@ -11,7 +11,7 @@
           создать
         </button>
         <button v-if="!voting" class="button ghost" @click="$emit('create', 'like')">
-          like
+          лайки
         </button>
         <button v-if="voting" class="button ghost" @click="$emit('delete', voting.id)">
           удалить
@@ -62,7 +62,7 @@ defineProps({
 defineEmits(['open', 'vote', 'create', 'delete'])
 
 const names = {
-  like: 'Like-голосование',
+  like: 'Лайки',
   yes_no: 'Голосование',
 }
 </script>

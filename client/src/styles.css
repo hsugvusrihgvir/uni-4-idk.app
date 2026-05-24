@@ -671,13 +671,30 @@ textarea {
 }
 
 .qr-box {
-  width: 96px;
-  height: 96px;
+  width: 240px;
+  height: 240px;
   flex: 0 0 auto;
   border-radius: 18px;
   background: rgba(255,255,255,.75);
   padding: 8px;
   object-fit: contain;
+}
+
+.qr-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.qr-controls .button {
+  padding: 8px 12px;
+  min-width: 46px;
+}
+
+.qr-controls .button.active {
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text);
 }
 
 .settings-grid {
@@ -860,8 +877,8 @@ textarea {
   }
 
   .qr-box {
-    width: 112px;
-    height: 112px;
+    max-width: min(320px, 100%);
+    max-height: min(320px, 100vw - 64px);
   }
 
   .board-grid,
@@ -1285,7 +1302,6 @@ textarea {
   }
 }
 
-/* Calm visual pass: keep the soft pink identity, but separate work zones more clearly. */
 :root {
   --cream: #fff7ec;
   --peach: #f8d6d7;
@@ -1413,8 +1429,7 @@ body {
 }
 
 .sidebar {
-  position: sticky;
-  top: 28px;
+  position: static;
   align-self: start;
 }
 

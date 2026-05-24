@@ -16,8 +16,26 @@
       <div>
         <h3>Ссылка приглашения</h3>
         <p>{{ inviteLink }}</p>
+        <div class="qr-controls" aria-label="размер qr">
+          <button
+            v-for="size in qrSizes"
+            :key="size.value"
+            class="button ghost"
+            :class="{ active: qrSize === size.value }"
+            type="button"
+            @click="qrSize = size.value"
+          >
+            {{ size.label }}
+          </button>
+        </div>
       </div>
-      <img v-if="qrUrl" class="qr-box" :src="qrUrl" alt="qr invite" />
+      <img
+        v-if="qrUrl"
+        class="qr-box"
+        :src="qrUrl"
+        :style="{ width: `${qrSize}px`, height: `${qrSize}px` }"
+        alt="qr invite"
+      />
     </section>
 
     <div class="row-list">
@@ -56,11 +74,17 @@ const props = defineProps({
 const emit = defineEmits(['add', 'remove', 'role'])
 const username = ref('')
 const qrUrl = ref('')
+const qrSize = ref(240)
+const qrSizes = [
+  { label: 'M', value: 180 },
+  { label: 'L', value: 240 },
+  { label: 'XL', value: 320 },
+]
 const inviteLink = computed(() => `${window.location.origin}/invite/${props.boardId}`)
 
 watchEffect(async () => {
   qrUrl.value = await QRCode.toDataURL(inviteLink.value, {
-    width: 180,
+    width: qrSize.value,
     margin: 2,
     color: {
       dark: '#4d3140',

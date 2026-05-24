@@ -1,7 +1,7 @@
 ﻿import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_user
@@ -13,6 +13,17 @@ from app.services.users import UsersService
 router = APIRouter(prefix="/api/v1/users", tags=["Users"])
 UPLOAD_DIR = Path(__file__).resolve().parents[2] / "uploads" / "avatars"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def delete_avatar_file(photo_url: str | None) -> None:
+    if not photo_url or not photo_url.startswith("/uploads/avatars/"):
+        return
+
+    path = (UPLOAD_DIR / Path(photo_url).name).resolve()
+    if path.parent != UPLOAD_DIR.resolve():
+        return
+
+    path.unlink(missing_ok=True)
 
 
 @router.get("/check-username", response_model=UsernameCheckResponse)
@@ -44,10 +55,20 @@ def get_me(cur: User = Depends(get_current_user)):
 
 
 @router.patch("/me", response_model=UserMeResponse)
-def update_me(body: UserMeUpdateRequest, cur: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def update_me(
+    body: UserMeUpdateRequest,
+    background_tasks: BackgroundTasks,
+    cur: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    old_photo_url = cur.photo_url
+
     try:
         user = UsersService(db).update_me(current_user=cur, username=body.username, name=body.name, photo_url=body.photo_url)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+    if old_photo_url and body.photo_url and old_photo_url != body.photo_url:
+        background_tasks.add_task(delete_avatar_file, old_photo_url)
 
     return UserMeResponse.model_validate(user)

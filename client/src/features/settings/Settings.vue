@@ -3,7 +3,7 @@
     <header class="section-header">
       <div>
         <p class="eyebrow">настройки</p>
-        <h2>Описание проекта и параметры доски</h2>
+        <h2>Описание и параметры доски</h2>
       </div>
     </header>
 
@@ -14,12 +14,12 @@
       </label>
 
       <label class="field span-2">
-        Описание проекта
+        Описание
         <textarea v-model="form.description"></textarea>
       </label>
 
       <label class="field span-2">
-        Контекст для ИИ
+        Контекст доски
         <textarea v-model="form.context"></textarea>
       </label>
 
@@ -38,7 +38,7 @@
 
     <section class="transfer-panel">
       <h3>Передача прав администратора</h3>
-      <p>Админ на доске всегда один.</p>
+      <p>На доске всегда должен быть хотя бы один администратор.</p>
 
       <select v-model="newAdminId">
         <option v-for="member in board.members" :key="member.id" :value="member.id">

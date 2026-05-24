@@ -33,7 +33,7 @@
             предложить идею
           </button>
           <button class="button ghost" @click="exportOpen = true">экспорт отчета</button>
-          <button class="button ghost" @click="aiOpen = true">ии-сводка</button>
+          <button class="button ghost" @click="aiOpen = true">сводка</button>
         </div>
       </header>
 
