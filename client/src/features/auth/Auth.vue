@@ -58,13 +58,13 @@
 
     <div class="auth-actions">
       <button v-if="step !== 'email'" class="button ghost" type="button" @click="back">{{ ui.back }}</button>
-      <button class="button primary" :disabled="loading">{{ buttonText }}</button>
+      <button class="button primary" :disabled="buttonDisabled">{{ buttonText }}</button>
     </div>
   </form>
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useStore } from '../../store/store.js'
 
 const emit = defineEmits(['authenticated'])
@@ -74,6 +74,7 @@ const step = ref('email')
 const error = ref('')
 const message = ref('')
 const usernameMessage = ref('')
+const usernameStatus = ref('idle')
 const avatar = ref(null)
 const avatarUrl = ref('')
 
@@ -92,6 +93,7 @@ const text = {
   usernameShort: 'Username должен быть не короче 3 символов.',
   usernameTaken: 'Username уже занят.',
   usernameFree: 'Username доступен.',
+  checkUsernameFirst: 'Сначала проверьте доступность username.',
   registered: 'Аккаунт создан. Код отправлен, введите его ниже.',
   enterCode: 'Введите код из письма.',
   badPhoto: 'Выберите картинку png, jpg или webp.',
@@ -106,6 +108,8 @@ const form = reactive({
 
 const loading = computed(() => state.loading)
 const avatarLetter = computed(() => (form.name || form.username || '?').slice(0, 1).toUpperCase())
+const usernameChecked = computed(() => step.value !== 'register' || usernameStatus.value === 'available')
+const buttonDisabled = computed(() => loading.value || !usernameChecked.value)
 const title = computed(() => {
   if (step.value === 'register') return 'Регистрация'
   if (step.value === 'code') return 'Код'
@@ -114,10 +118,20 @@ const title = computed(() => {
 
 const buttonText = computed(() => {
   if (loading.value) return 'ждем...'
+  if (step.value === 'register' && usernameStatus.value === 'checking') return 'проверяем...'
   if (step.value === 'register') return 'Зарегистрироваться'
   if (step.value === 'code') return 'Войти'
   return 'Дальше'
 })
+
+watch(
+  () => form.username,
+  () => {
+    if (step.value !== 'register') return
+    usernameStatus.value = 'idle'
+    usernameMessage.value = ''
+  }
+)
 
 function isEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
@@ -214,13 +228,12 @@ async function submitRegister() {
     return
   }
 
-  try {
-    const available = await checkUsername(form.username)
-    if (!available) {
-      fail(text.usernameTaken)
-      return
-    }
+  if (usernameStatus.value !== 'available') {
+    fail(text.checkUsernameFirst)
+    return
+  }
 
+  try {
     const photoUrl = avatar.value ? await uploadAvatar(avatar.value) : null
     await registerUser({
       email: form.email,
@@ -252,13 +265,21 @@ async function submitCode() {
 
 async function checkName() {
   usernameMessage.value = ''
-  if (step.value !== 'register' || form.username.length < 3) return
+  if (step.value !== 'register') return
+
+  if (form.username.length < 3) {
+    usernameStatus.value = 'idle'
+    return
+  }
 
   try {
+    usernameStatus.value = 'checking'
     const available = await checkUsername(form.username)
+    usernameStatus.value = available ? 'available' : 'taken'
     usernameMessage.value = available ? text.usernameFree : ''
     if (!available) fail(text.usernameTaken)
   } catch {
+    usernameStatus.value = 'idle'
     fail(state.error)
   }
 }
@@ -269,5 +290,6 @@ function back() {
   error.value = ''
   message.value = ''
   usernameMessage.value = ''
+  usernameStatus.value = 'idle'
 }
 </script>
