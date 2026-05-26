@@ -15,6 +15,7 @@ class UserMeResponse(BaseModel):
     username: str
     name: str | None
     photo_url: str | None
+    tg_id: int | None = None
 
 
 # PATCH /api/v1/users/me

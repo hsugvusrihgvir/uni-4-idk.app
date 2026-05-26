@@ -8,6 +8,7 @@ import * as boardReq from '../api/boards.js'
 import * as ideaReq from '../api/ideas.js'
 import * as voteReq from '../api/votings.js'
 import * as notifReq from '../api/notifications.js'
+import * as telegramReq from '../api/telegram.js'
 
 const state = reactive(structuredClone(baseState))
 setAccessToken(state.auth.accessToken)
@@ -29,7 +30,7 @@ setAuthSessionHandlers({
   },
 })
 
-const text = {
+const labels = {
   anonymous: '\u0430\u043d\u043e\u043d\u0438\u043c\u043d\u043e',
   member: '\u0443\u0447\u0430\u0441\u0442\u043d\u0438\u043a',
   requestError: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0437\u0430\u043f\u0440\u043e\u0441\u0430',
@@ -72,7 +73,9 @@ function mapIdea(idea, boardId) {
     description: idea.description,
     status: idea.status,
     isAnonymous: idea.is_anonymous ?? false,
-    author: idea.is_anonymous ? text.anonymous : text.member,
+    author: idea.is_anonymous ? labels.anonymous : (idea.author_name || idea.author_username || labels.member),
+    authorUsername: idea.author_username || '',
+    authorName: idea.author_name || '',
     createdAt: formatDate(idea.created_at),
     votesYes: idea.votesYes || 0,
     votesNo: idea.votesNo || 0,
@@ -124,7 +127,7 @@ function upsertIdea(idea) {
 }
 
 function setError(error) {
-  state.error = error?.message || text.requestError
+  state.error = error?.message || labels.requestError
 }
 
 export function useStore() {
@@ -201,6 +204,16 @@ export function useStore() {
     })
     state.auth.user = user
     return mapUser(user)
+  }
+
+  async function createTelegramLinkCode() {
+    try {
+      const data = await telegramReq.createTelegramLinkCode()
+      return data.code
+    } catch (error) {
+      setError(error)
+      throw error
+    }
   }
 
   function logout() {
@@ -331,10 +344,10 @@ export function useStore() {
   async function rejectIdea(ideaId, reason) {
     const data = await ideaReq.updateIdeaStatus(ideaId, {
       status: 'rejected',
-      rejection_reason: reason || text.rejectReason,
+      rejection_reason: reason || labels.rejectReason,
     })
     const idea = upsertIdea(data)
-    idea.rejectionReason = reason || text.rejectReason
+    idea.rejectionReason = reason || labels.rejectReason
     return idea
   }
 
@@ -343,9 +356,17 @@ export function useStore() {
     if (!idea) return
 
     const voting = activeVoting(idea.boardId)
-    if (!voting) throw new Error('Нет активного голосования')
+    if (!voting) throw new Error('РќРµС‚ Р°РєС‚РёРІРЅРѕРіРѕ РіРѕР»РѕСЃРѕРІР°РЅРёСЏ')
 
-    await voteReq.createVote({ voting_id: voting.id, idea_id: ideaId })
+    const result = getVoteResults(idea.boardId).find((item) => item.id === ideaId)
+    const payload = { voting_id: voting.id, idea_id: ideaId }
+
+    if (result?.userVoted) {
+      await voteReq.deleteVote(payload)
+    } else {
+      await voteReq.createVote(payload)
+    }
+
     await loadVotingResults(idea.boardId)
   }
 
@@ -433,6 +454,7 @@ export function useStore() {
         title: item.title,
         votesCount: item.votes_count,
         approvalPercent: item.approval_percent,
+        userVoted: item.user_voted,
       }
     })
     return state.voteResults[boardId]
@@ -473,6 +495,7 @@ export function useStore() {
     uploadAvatar,
     loadProfile,
     updateProfile,
+    createTelegramLinkCode,
     logout,
     loadBoards,
     createBoard,
@@ -504,3 +527,4 @@ export function useStore() {
     notifications: computed(() => state.notifications),
   }
 }
+

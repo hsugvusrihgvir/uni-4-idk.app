@@ -1,6 +1,9 @@
-﻿<template>
+<template>
   <form class="auth-card" novalidate @submit.prevent="submit">
-    <p class="eyebrow">idk.app</p>
+    <div class="brand-mark">
+      <img src="/src/assets/logo.png" alt="idk.app logo" />
+      <p class="eyebrow">idk.app</p>
+    </div>
     <h1>{{ title }}</h1>
 
     <p v-if="message" class="form-message success">{{ message }}</p>
@@ -27,12 +30,12 @@
       <p v-if="usernameMessage" class="form-message success">{{ usernameMessage }}</p>
 
       <label class="field">
-        {{ ui.name }}
+        {{ labels.name }}
         <input v-model.trim="form.name" placeholder="Name" />
       </label>
 
       <label class="field">
-        {{ ui.photo }}
+        {{ labels.photo }}
         <span class="avatar-upload">
           <span class="avatar-preview">
             <img v-if="avatarUrl" :src="avatarUrl" alt="avatar" />
@@ -51,14 +54,14 @@
       </label>
 
       <label class="field">
-        {{ ui.code }}
+        {{ labels.code }}
         <input v-model.trim="form.code" inputmode="numeric" placeholder="123456" />
       </label>
     </template>
 
     <div class="auth-actions">
-      <button v-if="step !== 'email'" class="button ghost" type="button" @click="back">{{ ui.back }}</button>
-      <button class="button primary" :disabled="buttonDisabled">{{ buttonText }}</button>
+      <button v-if="step !== 'email'" class="button ghost" type="button" @click="back">{{ labels.back }}</button>
+      <button class="button primary" :disabled="disabled">{{ submitText }}</button>
     </div>
   </form>
 </template>
@@ -78,14 +81,14 @@ const usernameStatus = ref('idle')
 const avatar = ref(null)
 const avatarUrl = ref('')
 
-const ui = {
+const labels = {
   name: 'Имя',
   photo: 'Фото',
   code: 'Код',
   back: 'назад',
 }
 
-const text = {
+const messages = {
   enterEmail: 'Введите корректную почту, например name@example.com',
   enterEmailShort: 'Введите корректную почту.',
   codeSent: 'Код отправлен. Введите его ниже.',
@@ -109,14 +112,14 @@ const form = reactive({
 const loading = computed(() => state.loading)
 const avatarLetter = computed(() => (form.name || form.username || '?').slice(0, 1).toUpperCase())
 const usernameChecked = computed(() => step.value !== 'register' || usernameStatus.value === 'available')
-const buttonDisabled = computed(() => loading.value || !usernameChecked.value)
+const disabled = computed(() => loading.value || !usernameChecked.value)
 const title = computed(() => {
   if (step.value === 'register') return 'Регистрация'
   if (step.value === 'code') return 'Код'
   return 'Вход'
 })
 
-const buttonText = computed(() => {
+const submitText = computed(() => {
   if (loading.value) return 'ждем...'
   if (step.value === 'register' && usernameStatus.value === 'checking') return 'проверяем...'
   if (step.value === 'register') return 'Зарегистрироваться'
@@ -137,7 +140,7 @@ function isEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 }
 
-function fail(value) {
+function setFormError(value) {
   error.value = value
   message.value = ''
 }
@@ -175,7 +178,7 @@ async function pickAvatar(event) {
   if (!file) return
 
   if (!imageFile(file)) {
-    fail(text.badPhoto)
+    setFormError(messages.badPhoto)
     return
   }
 
@@ -204,32 +207,32 @@ async function submit() {
 
 async function submitEmail() {
   if (!isEmail(form.email)) {
-    fail(text.enterEmail)
+    setFormError(messages.enterEmail)
     return
   }
 
   try {
     const exists = await requestLogin(form.email)
     step.value = exists ? 'code' : 'register'
-    message.value = exists ? text.codeSent : text.needRegister
+    message.value = exists ? messages.codeSent : messages.needRegister
   } catch {
-    fail(state.error)
+    setFormError(state.error)
   }
 }
 
 async function submitRegister() {
   if (!isEmail(form.email)) {
-    fail(text.enterEmailShort)
+    setFormError(messages.enterEmailShort)
     return
   }
 
   if (form.username.length < 3) {
-    fail(text.usernameShort)
+    setFormError(messages.usernameShort)
     return
   }
 
   if (usernameStatus.value !== 'available') {
-    fail(text.checkUsernameFirst)
+    setFormError(messages.checkUsernameFirst)
     return
   }
 
@@ -243,15 +246,15 @@ async function submitRegister() {
     })
 
     step.value = 'code'
-    message.value = text.registered
+    message.value = messages.registered
   } catch {
-    fail(state.error)
+    setFormError(state.error)
   }
 }
 
 async function submitCode() {
   if (form.code.length < 4) {
-    fail(text.enterCode)
+    setFormError(messages.enterCode)
     return
   }
 
@@ -259,7 +262,7 @@ async function submitCode() {
     await verifyLogin({ email: form.email, code: form.code })
     emit('authenticated')
   } catch {
-    fail(state.error)
+    setFormError(state.error)
   }
 }
 
@@ -276,11 +279,11 @@ async function checkName() {
     usernameStatus.value = 'checking'
     const available = await checkUsername(form.username)
     usernameStatus.value = available ? 'available' : 'taken'
-    usernameMessage.value = available ? text.usernameFree : ''
-    if (!available) fail(text.usernameTaken)
+    usernameMessage.value = available ? messages.usernameFree : ''
+    if (!available) setFormError(messages.usernameTaken)
   } catch {
     usernameStatus.value = 'idle'
-    fail(state.error)
+    setFormError(state.error)
   }
 }
 
@@ -293,3 +296,4 @@ function back() {
   usernameStatus.value = 'idle'
 }
 </script>
+

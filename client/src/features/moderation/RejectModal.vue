@@ -8,7 +8,7 @@
         <textarea v-model="reason" placeholder="Причина отклонения"></textarea>
       </label>
 
-      <button class="button primary">Не одобрить</button>
+      <button class="button primary">не одобрять</button>
     </form>
   </Modal>
 </template>

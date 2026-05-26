@@ -34,6 +34,19 @@ class UsersQueries:
         )
         return self.db.execute(stmt).scalar_one_or_none()
 
+    def get_by_tg_id(self, tg_id: int) -> User | None:
+        stmt = (
+            select(User)
+            .where(User.tg_id == tg_id)
+            .limit(1)
+        )
+        return self.db.execute(stmt).scalar_one_or_none()
+
+    def set_tg_id(self, *, user: User, tg_id: int) -> User:
+        user.tg_id = tg_id
+        self.db.flush()
+        return user
+
     def create(
         self,
         *,

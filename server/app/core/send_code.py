@@ -13,8 +13,8 @@ MAIL_USERNAME = os.getenv("MAIL_USERNAME")
 MAIL_KEY = os.getenv("MAIL_KEY")
 MAIL_FROM = os.getenv("MAIL_FROM", MAIL_USERNAME)
 
-SMTP_HOST = "smtp.mail.ru"
-SMTP_PORT = 465
+SMTP_HOST = os.getenv("SMTP_HOST", "smtp.mail.ru")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "465"))
 
 
 def send_auth_code(email: str, code: str) -> None:

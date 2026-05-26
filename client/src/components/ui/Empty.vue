@@ -1,6 +1,6 @@
 <template>
   <div class="empty-state">
-    <div class="empty-icon">✦</div>
+    <div class="empty-icon">i</div>
     <h3>{{ title }}</h3>
     <p>{{ text }}</p>
   </div>

@@ -22,6 +22,8 @@ class IdeaResponse(BaseModel):
     status: str
     is_anonymous: bool
     created_at: datetime
+    author_username: str | None = None
+    author_name: str | None = None
 
 
 class IdeaItemResponse(BaseModel):
@@ -31,6 +33,9 @@ class IdeaItemResponse(BaseModel):
     title: str
     description: str | None
     status: str
+    is_anonymous: bool = False
+    author_username: str | None = None
+    author_name: str | None = None
 
 
 class IdeasListResponse(BaseModel):

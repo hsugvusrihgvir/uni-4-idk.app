@@ -23,7 +23,13 @@ router = APIRouter(
 
 @router.post("/login", response_model=AuthLoginResponse)
 def login(body: AuthLoginRequest, db: Session = Depends(get_db)):
-    exists = AuthService(db).login(email=body.email)
+    try:
+        exists = AuthService(db).login(email=body.email)
+    except RuntimeError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
 
     if not exists:
         return AuthLoginResponse(
@@ -49,6 +55,11 @@ def register(body: AuthRegisterRequest, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except RuntimeError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e),
         )
 

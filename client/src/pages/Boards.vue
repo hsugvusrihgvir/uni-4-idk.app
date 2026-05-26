@@ -3,7 +3,10 @@
     <section class="page-hero">
       <header class="topbar">
         <div>
-          <p class="eyebrow"><h1>Мои доски</h1></p>
+          <div class="brand-title">
+            <img src="/src/assets/logo.png" alt="idk.app logo" />
+            <h1>Мои доски</h1>
+          </div>
         </div>
 
         <div class="topbar-actions">
@@ -27,7 +30,7 @@
 
     <section class="board-grid">
       <BoardCard
-        v-for="board in foundBoards"
+        v-for="board in shownBoards"
         :key="board.id"
         :board="board"
         :ideas-count="getBoardIdeas(board.id).length"
@@ -37,7 +40,7 @@
     </section>
 
     <Empty
-      v-if="!foundBoards.length"
+      v-if="!shownBoards.length"
       title="Досок нет"
       text="Создайте первую доску для сбора идей."
     />
@@ -46,10 +49,10 @@
 
     <ProfileModal v-if="profileOpen" @close="profileOpen = false" />
 
-    <Notifs
-      v-if="notifsOpen"
+    <NotificationsPanel
+      v-if="notifOpen"
       :notifications="notifications"
-      @close="notifsOpen = false"
+      @close="notifOpen = false"
       @remove="deleteNotification"
     />
   </main>
@@ -59,7 +62,7 @@
 import { computed, onMounted, ref } from 'vue'
 import BoardCard from '../features/boards/BoardCard.vue'
 import BoardForm from '../features/boards/BoardForm.vue'
-import Notifs from '../features/boards/Notifs.vue'
+import NotificationsPanel from '../features/boards/NotificationsPanel.vue'
 import ProfileModal from '../features/profile/ProfileModal.vue'
 import Empty from '../components/ui/Empty.vue'
 import { useStore } from '../store/store'
@@ -81,7 +84,7 @@ const {
 
 const search = ref('')
 const formOpen = ref(false)
-const notifsOpen = ref(false)
+const notifOpen = ref(false)
 const profileOpen = ref(false)
 
 const currentUser = computed(() => {
@@ -94,7 +97,7 @@ const avatarLetter = computed(() =>
   (currentUser.value?.name || currentUser.value?.username || '?').slice(0, 1).toUpperCase()
 )
 
-const foundBoards = computed(() =>
+const shownBoards = computed(() =>
   boards.value.filter((board) => board.title.toLowerCase().includes(search.value.toLowerCase()))
 )
 
@@ -102,7 +105,7 @@ onMounted(loadBoards)
 
 async function openNotifs() {
   await loadNotifications()
-  notifsOpen.value = true
+  notifOpen.value = true
 }
 
 async function saveBoard(form) {

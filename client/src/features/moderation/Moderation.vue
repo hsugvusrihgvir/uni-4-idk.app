@@ -2,8 +2,8 @@
   <section class="panel">
     <header class="section-header">
       <div>
-        <p class="eyebrow">pending</p>
-        <h2>Модерация</h2>
+        <p class="eyebrow">модерация</p>
+        <h2>Очередь идей</h2>
       </div>
     </header>
 
@@ -16,7 +16,7 @@
 
         <div class="list-actions">
           <button class="button primary" @click="$emit('approve', idea.id)">одобрить</button>
-          <button class="button ghost" @click="$emit('reject', idea)">не одобрить</button>
+          <button class="button ghost" @click="$emit('reject', idea)">отклонить</button>
         </div>
       </article>
     </div>
@@ -24,7 +24,7 @@
     <Empty
       v-else
       title="Очередь пустая"
-      text="Новые идеи появятся здесь, если выключено автоодобрение."
+      text="Новые идеи появятся здесь, если включена модерация."
     />
   </section>
 </template>

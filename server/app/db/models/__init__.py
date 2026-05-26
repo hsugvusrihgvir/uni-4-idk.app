@@ -1,5 +1,6 @@
 from app.db.models.base import Base
 from app.db.models.board import Board
+from app.db.models.board_telegram_chat import BoardTelegramChat
 from app.db.models.board_member import BoardMember, UserBoard
 from app.db.models.email_code import EmailCode
 from app.db.models.idea import Idea
@@ -15,6 +16,7 @@ from app.db.models.voting_type import VotingType
 __all__ = [
     "Base",
     "Board",
+    "BoardTelegramChat",
     "BoardMember",
     "EmailCode",
     "Idea",

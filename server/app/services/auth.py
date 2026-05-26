@@ -31,8 +31,7 @@ class AuthService:
         code = gen_code()
         self.q_a.create_code(email=email, code=code, ttl_minutes=5)
 
-        # mail_sender(email, code)
-        print(f"[AUTH CODE] {email}: {code}")
+        mail_sender(email, code)
 
         return True
 
@@ -48,8 +47,7 @@ class AuthService:
         code = gen_code()
         self.q_a.create_code(email=email, code=code, ttl_minutes=5)
 
-        # mail_sender(email, code)
-        print(f"[AUTH CODE] {email}: {code}")
+        mail_sender(email, code)
 
     def verify(self, *, email: str, code: str) -> tuple[str, str, User]:
         row = self.q_a.get_last_code(email=email, code=code)

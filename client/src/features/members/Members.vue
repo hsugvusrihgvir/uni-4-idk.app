@@ -13,7 +13,7 @@
     </form>
 
     <section class="invite-panel">
-      <div>
+      <div class="invite-main">
         <h3>Ссылка приглашения</h3>
         <p>{{ inviteLink }}</p>
         <div class="qr-controls" aria-label="размер qr">
@@ -38,14 +38,16 @@
       />
     </section>
 
-    <div class="row-list">
+    <div class="row-list members-list">
       <article v-for="member in members" :key="member.id" class="member-card">
         <div class="member-avatar">
           <img v-if="member.photoUrl" :src="member.photoUrl" alt="avatar" />
           <span v-else>{{ (member.name || member.username).slice(0, 1) }}</span>
         </div>
         <div class="member-info">
-          <h3>{{ member.name || member.username }}</h3>
+          <button class="member-name" type="button" @click="$emit('open-member', member)">
+            {{ member.name || member.username }}
+          </button>
           <p>{{ member.username }} / {{ member.role }}</p>
         </div>
 
@@ -71,7 +73,7 @@ const props = defineProps({
   boardId: { type: String, required: true },
 })
 
-const emit = defineEmits(['add', 'remove', 'role'])
+const emit = defineEmits(['add', 'remove', 'role', 'open-member'])
 const username = ref('')
 const qrUrl = ref('')
 const qrSize = ref(240)

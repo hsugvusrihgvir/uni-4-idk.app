@@ -2,8 +2,8 @@
   <section class="panel">
     <header class="section-header">
       <div>
-        <p class="eyebrow">rejected</p>
-        <h2>Отклонённые идеи</h2>
+        <p class="eyebrow">отклоненные</p>
+        <h2>Отклоненные идеи</h2>
       </div>
     </header>
 
@@ -22,7 +22,7 @@
 
     <Empty
       v-else
-      title="Отклонённых идей нет"
+      title="Отклоненных идей нет"
       text="Здесь будут идеи, которые модератор или админ не одобрили."
     />
   </section>

@@ -73,6 +73,16 @@ def create_vote(body: VoteCreateRequest, cur: User = Depends(get_current_user), 
     return VoteResponse.model_validate(vote)
 
 
+@router.delete("/api/v1/votes", status_code=status.HTTP_204_NO_CONTENT)
+def delete_vote(body: VoteCreateRequest, cur: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    try:
+        VotingsService(db).delete_vote(current_user=cur, voting_id=body.voting_id, idea_id=body.idea_id)
+    except PermissionError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+
 @router.get("/api/v1/votings/{voting_id}/results", response_model=VotingResultsResponse)
 def get_voting_results(voting_id: UUID, cur: User = Depends(get_current_user), db: Session = Depends(get_db)):
     try:

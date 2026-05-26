@@ -53,7 +53,7 @@ class IdeasQueries:
     def get_by_board(self, *, board_id: UUID) -> list[Idea]:
         stmt = (
             select(Idea)
-            .options(selectinload(Idea.idea_status))
+            .options(selectinload(Idea.idea_status), selectinload(Idea.user))
             .where(Idea.board_id == board_id)
             .order_by(Idea.created_at.desc())
         )
@@ -63,7 +63,7 @@ class IdeasQueries:
         stmt = (
             select(Idea)
             .join(IdeaStatus)
-            .options(selectinload(Idea.idea_status))
+            .options(selectinload(Idea.idea_status), selectinload(Idea.user))
             .where(
                 Idea.board_id == board_id,
                 IdeaStatus.status == status,
@@ -73,7 +73,12 @@ class IdeasQueries:
         return list(self.db.execute(stmt).scalars().all())
 
     def get_by_id(self, *, idea_id: UUID) -> Idea | None:
-        stmt = select(Idea).where(Idea.id == idea_id).limit(1)
+        stmt = (
+            select(Idea)
+            .options(selectinload(Idea.idea_status), selectinload(Idea.user))
+            .where(Idea.id == idea_id)
+            .limit(1)
+        )
         return self.db.execute(stmt).scalar_one_or_none()
 
     def delete(self, idea: Idea) -> None:

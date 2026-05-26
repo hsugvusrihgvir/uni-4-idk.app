@@ -1,17 +1,17 @@
 <template>
-  <Modal :title="idea.title" :label="ui.card" @close="$emit('close')">
+  <Modal :title="idea.title" :label="labels.card" @close="$emit('close')">
     <div class="idea-details">
       <p>{{ idea.description }}</p>
 
       <div class="chip-row">
         <span class="chip">{{ statusLabel }}</span>
-        <span v-if="idea.isAnonymous" class="chip">{{ ui.anonymous }}</span>
+        <span v-if="idea.isAnonymous" class="chip">{{ labels.anonymous }}</span>
         <span v-else class="chip">{{ idea.author }}</span>
-        <span class="chip">{{ approvalPercent }}% {{ ui.approval }}</span>
+        <span class="chip">{{ approvalPercent }}% {{ labels.approval }}</span>
       </div>
 
       <p v-if="idea.rejectionReason" class="reason-box">
-        {{ ui.reason }}: {{ idea.rejectionReason }}
+        {{ labels.reason }}: {{ idea.rejectionReason }}
       </p>
     </div>
   </Modal>
@@ -27,7 +27,7 @@ const props = defineProps({
 
 defineEmits(['close'])
 
-const ui = {
+const labels = {
   card: '\u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0430 \u0438\u0434\u0435\u0438',
   anonymous: '\u0430\u043d\u043e\u043d\u0438\u043c\u043d\u043e',
   approval: '\u043e\u0434\u043e\u0431\u0440\u0435\u043d\u0438\u044f',

@@ -3,7 +3,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from app.api import auth, board_admin, boards, health, idea_ws, ideas, moderation, notifications, users, votings
+from app.api import auth, board_admin, boards, health, idea_ws, ideas, moderation, notifications, telegram, users, votings
 
 app = FastAPI(title="idk.app API", version="0.1.0")
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -39,4 +39,5 @@ app.include_router(ideas.router)
 app.include_router(idea_ws.router)
 app.include_router(moderation.router)
 app.include_router(notifications.router)
+app.include_router(telegram.router)
 app.include_router(votings.router)

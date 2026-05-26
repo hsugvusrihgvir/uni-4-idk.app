@@ -138,7 +138,8 @@
   "email": "user@example.com",  
   "username": "username",  
   "name": "Name",  
-  "photo_url": "photo.png"
+  "photo_url": "photo.png",
+  "tg_id": 123456789
 }  
 ```  
   
@@ -163,7 +164,8 @@
   "email": "user@example.com",  
   "username": "username",  
   "name": "Name",  
-  "photo_url": "photo.png"
+  "photo_url": "photo.png",
+  "tg_id": 123456789
 }  
 ```  
   
@@ -348,6 +350,8 @@ http://localhost:5173/invite/{board_id}
   "description": "description",  
   "status": "pending",  
   "is_anonymous": true,  
+  "author_username": null,
+  "author_name": null,
   "created_at": "01.01.2000"
 }  
 ```  
@@ -369,6 +373,8 @@ http://localhost:5173/invite/{board_id}
 				  "description": "description", 
 				  "status": "approved",    
 				  "is_anonymous": true,      
+				  "author_username": null,
+				  "author_name": null,
 				  "created_at": "01.01.2000"    
 			  }  
 		   ]
@@ -378,8 +384,8 @@ http://localhost:5173/invite/{board_id}
 ---  
   
 ### 4.3 `DELETE /api/v1/ideas/{idea_id}`  
-**Кто:** Автор идеи    
-Удалить свою идею.  
+**Кто:** Автор идеи, модератор или админ доски    
+Удалить идею.  
   
 **Ответ:** `204 No Content`  
   
@@ -406,6 +412,8 @@ http://localhost:5173/invite/{board_id}
   "description": "description",  
   "status": "approved",  
   "is_anonymous": true,  
+  "author_username": null,
+  "author_name": null,
   "created_at": "01.01.2000"
 }  
 ```  
@@ -426,6 +434,8 @@ http://localhost:5173/invite/{board_id}
 				  "description": "description",  
 				  "status": "pending",    
 				  "is_anonymous": false,     
+				  "author_username": "username",
+				  "author_name": "Name",
 				  "created_at": "01.01.2000"    
 			  }  
 		   ]
@@ -435,8 +445,8 @@ http://localhost:5173/invite/{board_id}
 ---  
   
 ### 4.6 `WS /api/v1/boards/{board_id}/ideas/ws?token=access_token`  
-**Кто:** Пользователь доски    
-Получать идеи в реальном времени.  
+**Кто:** Пользователь доски
+Получать идеи в реальном времени.
   
 **Сообщение при новой идее:**  
 ```json  
@@ -449,6 +459,8 @@ http://localhost:5173/invite/{board_id}
 		  "description": "description",    
 		  "status": "approved",    
 		  "is_anonymous": true,    
+		  "author_username": null,
+		  "author_name": null,
 		  "created_at": "01.01.2000"  
 	  }
 }  
@@ -459,8 +471,8 @@ http://localhost:5173/invite/{board_id}
 ## 5) Members  
   
 ### 5.1 `GET /api/v1/boards/{board_id}/members`  
-**Кто:** Пользователь доски    
-Получить участников доски.  
+**Кто:** Пользователь доски
+Получить участников доски.
   
 **Ответ:**  
 ```json  
@@ -480,8 +492,8 @@ http://localhost:5173/invite/{board_id}
 ---  
   
 ### 5.2 `POST /api/v1/boards/{board_id}/members`  
-**Кто:** Админ доски    
-Добавить участника на доску.  
+**Кто:** Админ доски
+Добавить участника на доску.
   
 **Body:**  
 ```json  
@@ -505,8 +517,8 @@ http://localhost:5173/invite/{board_id}
 ---  
   
 ### 5.3 `PATCH /api/v1/boards/{board_id}/members/{user_id}/role`  
-**Кто:** Админ доски    
-Изменить роль участника.  
+**Кто:** Админ доски
+Изменить роль участника.
   
 **Body:**  
 ```json  
@@ -529,8 +541,8 @@ http://localhost:5173/invite/{board_id}
 ---  
   
 ### 5.4 `DELETE /api/v1/boards/{board_id}/members/{user_id}`  
-**Кто:** Админ доски    
-Удалить участника с доски.  
+**Кто:** Админ доски
+Удалить участника с доски.
   
 **Ответ:** `204 No Content`  
   
@@ -539,8 +551,12 @@ http://localhost:5173/invite/{board_id}
 ## 6) Votings  
   
 ### 6.1 `POST /api/v1/boards/{board_id}/votings`  
-**Кто:** Админ доски    
-Создать голосование.  
+**Кто:** Админ доски
+Создать голосование.
+
+`type`:
+- `yes_no` — один выбор. Новый голос пользователя заменяет его старый голос в этом голосовании.
+- `like` — несколько идей. Пользователь может голосовать за несколько идей.
   
 **Body:**  
 ```json  
@@ -594,6 +610,8 @@ http://localhost:5173/invite/{board_id}
 ### 7.1 `POST /api/v1/votes`  
 **Кто:** Пользователь доски    
 Проголосовать за идею.  
+
+Для голосования типа `yes_no` новый голос автоматически заменяет старый голос пользователя.
   
 **Body:**  
 ```json  
@@ -615,9 +633,27 @@ http://localhost:5173/invite/{board_id}
   
 ---  
   
-### 7.2 `GET /api/v1/votings/{voting_id}/results`  
+### 7.2 `DELETE /api/v1/votes`
 **Кто:** Пользователь доски    
+Отменить свой голос за идею.
+
+**Body:**
+```json
+{
+  "voting_id": "uuid",
+  "idea_id": "uuid"
+}
+```
+
+**Ответ:** `204 No Content`
+
+---  
+  
+### 7.3 `GET /api/v1/votings/{voting_id}/results`  
+**Кто:** Пользователь доски
 Получить результаты голосования.  
+
+В ответ попадают одобренные идеи доски, включая идеи с `0` голосов.
   
 **Ответ:**  
 ```json  
@@ -627,7 +663,8 @@ http://localhost:5173/invite/{board_id}
 		  "idea_id": "uuid",      
 		  "title": "Idea 1",      
 		  "votes_count": 10,      
-		  "approval_percent": 80    
+		  "approval_percent": 80,
+		  "user_voted": true
 	  }  
   ]
 }  
@@ -658,20 +695,144 @@ http://localhost:5173/invite/{board_id}
 ---  
   
 ### 8.2 `DELETE /api/v1/notifications/{notification_id}`  
-**Кто:** Пользователь    
-Удалить свое уведомление.  
+**Кто:** Пользователь
+Удалить свое уведомление.
   
 **Ответ:** `204 No Content`  
   
 ---  
-  
-## 9) Экспорт
 
-Экспорт идей сейчас выполняется на стороне клиента: фронт скачивает HTML-отчет
-по результатам голосования. Отдельного backend endpoint для экспорта нет.
+## 9) Telegram bot
+
+Ручку `link-code` дергает сайт. Остальные ручки дергает бот, для них нужен header:
+
+```text
+X-Bot-Secret: TELEGRAM_BOT_SECRET
+```
+
+Бот лежит в `app/bot/telegram_bot.py`.
+
+Бот написан на `aiogram`.
+
+Запуск:
+
+```bash
+python -m app.bot.telegram_bot
+```
+
+Переменные в `.env`:
+
+```env
+TELEGRAM_BOT_TOKEN=token_from_botfather
+TELEGRAM_BOT_SECRET=secret_for_backend
+API_URL=http://127.0.0.1:8000
+```
+
+Команды бота:
+
+```text
+/link 123456
+/bind board_uuid
+/idea текст идеи
+```
+
+После `/idea текст идеи` бот сначала покажет кнопки:
+
+```text
+[сохранить] [отмена]
+```
+
+Идея отправляется на сервер только после нажатия `сохранить`.
+
+Как это работает:
+
+1. На сайте пользователь открывает профиль и получает код через `POST /api/v1/telegram/link-code`.
+2. В личке с ботом пишет `/link код`.
+3. Админ доски открывает настройки доски и копирует команду `/bind id_доски`.
+4. Админ добавляет бота в общий чат.
+5. В общем чате пишет `/bind id_доски`.
+6. Любой участник доски с привязанным Telegram пишет `/idea текст`.
+7. Бот просит подтвердить идею кнопкой.
+8. Идея создается на доске и появляется на сайте.
 
 ---
 
-## 10) Сводка
+### 9.1 `POST /api/v1/telegram/link-code`
+**Кто:** Пользователь  
+Получить код для привязки Telegram.
 
-Функция сводки находится в разработке. Отдельного backend endpoint для нее пока нет.
+**Ответ:**
+```json
+{
+  "code": "123456"
+}
+```
+
+---
+
+### 9.2 `POST /api/v1/telegram/users/link`
+**Кто:** Telegram bot  
+Привязать Telegram-аккаунт к пользователю приложения.
+
+**Body:**
+```json
+{
+  "code": "123456",
+  "telegram_user_id": 123456789
+}
+```
+
+**Ответ:**
+```json
+{
+  "message": "Telegram account linked"
+}
+```
+
+---
+
+### 9.3 `POST /api/v1/telegram/chats/bind`
+**Кто:** Telegram bot  
+Привязать Telegram-чат к доске.
+
+Пользователь, который написал команду в чате, должен уже иметь `tg_id` в аккаунте и быть админом доски.
+
+**Body:**
+```json
+{
+  "board_id": "uuid",
+  "telegram_user_id": 123456789,
+  "telegram_chat_id": -1001234567890,
+  "chat_title": "Project chat"
+}
+```
+
+**Ответ:**
+```json
+{
+  "board_id": "uuid",
+  "telegram_chat_id": -1001234567890,
+  "chat_title": "Project chat"
+}
+```
+
+---
+
+### 9.4 `POST /api/v1/telegram/ideas`
+**Кто:** Telegram bot  
+Создать идею из привязанного Telegram-чата.
+
+Telegram-пользователь должен быть привязан к аккаунту и быть участником доски.
+
+**Body:**
+```json
+{
+  "telegram_user_id": 123456789,
+  "telegram_chat_id": -1001234567890,
+  "text": "Добавить темную тему"
+}
+```
+
+**Ответ:** такой же, как у `POST /api/v1/ideas`.
+
+---

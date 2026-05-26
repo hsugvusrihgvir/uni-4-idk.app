@@ -24,6 +24,13 @@ export function createVote(data) {
   })
 }
 
+export function deleteVote(data) {
+  return request('/api/v1/votes', {
+    method: 'DELETE',
+    body: JSON.stringify(data),
+  })
+}
+
 export function getVotingResults(votingId) {
   return request(`/api/v1/votings/${votingId}/results`)
 }

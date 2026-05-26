@@ -24,16 +24,24 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import Modal from '../../components/ui/Modal.vue'
 
-defineProps({
+const props = defineProps({
   allowAnonymous: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['close', 'save'])
 const error = ref('')
-const form = reactive({ title: '', description: '', isAnonymous: true })
+const form = reactive({ title: '', description: '', isAnonymous: false })
+
+watch(
+  () => props.allowAnonymous,
+  (allowAnonymous) => {
+    if (!allowAnonymous) form.isAnonymous = false
+  },
+  { immediate: true }
+)
 
 function submit() {
   if (!form.title) {
@@ -47,6 +55,6 @@ function submit() {
   }
 
   error.value = ''
-  emit('save', { ...form })
+  emit('save', { ...form, isAnonymous: props.allowAnonymous ? form.isAnonymous : false })
 }
 </script>

@@ -51,3 +51,9 @@ class Board(Base):
         back_populates="board",
         cascade="all, delete-orphan",
     )
+
+    telegram_chats = relationship(
+        "BoardTelegramChat",
+        back_populates="board",
+        cascade="all, delete-orphan",
+    )

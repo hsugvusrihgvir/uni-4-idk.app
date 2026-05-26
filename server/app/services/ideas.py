@@ -31,7 +31,7 @@ class IdeasService:
 
         status = "pending" if member.board.moderation else "approved"
 
-        return self.q_i.create(
+        idea = self.q_i.create(
             board_id=board_id,
             user_id=current_user.id,
             title=title,
@@ -39,6 +39,8 @@ class IdeasService:
             status=status,
             is_anonymous=is_anonymous,
         )
+        idea.user = current_user
+        return idea
 
     def get_by_board(self, *, current_user: User, board_id: UUID) -> list[Idea]:
         member = self.q_b.get_member(board_id=board_id, user_id=current_user.id)
@@ -54,7 +56,9 @@ class IdeasService:
         if idea is None:
             raise ValueError("Idea not found")
 
-        if idea.user_id != current_user.id:
+        member = self.q_b.get_member(board_id=idea.board_id, user_id=current_user.id)
+
+        if idea.user_id != current_user.id and (member is None or member.role not in {"admin", "moderator"}):
             raise PermissionError("Only author can delete idea")
 
         self.q_i.delete(idea)

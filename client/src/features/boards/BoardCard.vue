@@ -5,7 +5,7 @@
     <header class="board-card-header">
       <span class="chip">{{ board.role }}</span>
 
-      <button class="text-danger mini-delete" type="button" @click.stop="$emit('remove', board.id)">
+      <button v-if="board.role === 'admin'" class="text-danger mini-delete" type="button" @click.stop="$emit('remove', board.id)">
         удалить
       </button>
     </header>

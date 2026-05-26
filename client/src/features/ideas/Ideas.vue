@@ -14,8 +14,10 @@
         v-for="idea in foundIdeas"
         :key="idea.id"
         :idea="idea"
+        :can-delete="canDelete || idea.authorUsername === currentUsername"
         @open="$emit('open', $event)"
         @remove="$emit('remove', $event)"
+        @open-author="$emit('open-author', $event)"
       />
     </div>
 
@@ -34,9 +36,11 @@ import Empty from '../../components/ui/Empty.vue'
 
 const props = defineProps({
   ideas: { type: Array, default: () => [] },
+  canDelete: { type: Boolean, default: false },
+  currentUsername: { type: String, default: '' },
 })
 
-defineEmits(['open', 'remove'])
+defineEmits(['open', 'remove', 'open-author'])
 
 const search = ref('')
 const foundIdeas = computed(() =>

@@ -68,6 +68,10 @@ class VotingsQueries:
         )
         return self.db.execute(stmt).scalar_one_or_none()
 
+    def get_user_votes(self, *, user_id: UUID, voting_id: UUID) -> list[Vote]:
+        stmt = select(Vote).where(Vote.user_id == user_id, Vote.voting_id == voting_id)
+        return list(self.db.execute(stmt).scalars().all())
+
     def create_vote(self, *, user_id: UUID, voting_id: UUID, idea_id: UUID) -> Vote:
         vote = Vote(user_id=user_id, voting_id=voting_id, idea_id=idea_id)
 
@@ -75,6 +79,10 @@ class VotingsQueries:
         self.db.flush()
 
         return vote
+
+    def delete_vote(self, vote: Vote) -> None:
+        self.db.delete(vote)
+        self.db.flush()
 
     def get_votes(self, *, voting_id: UUID) -> list[Vote]:
         stmt = (

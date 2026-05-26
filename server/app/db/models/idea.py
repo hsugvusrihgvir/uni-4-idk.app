@@ -52,3 +52,11 @@ class Idea(Base):
     @property
     def status(self) -> str:
         return self.idea_status.status
+
+    @property
+    def author_username(self) -> str | None:
+        return None if self.is_anonymous else self.user.username
+
+    @property
+    def author_name(self) -> str | None:
+        return None if self.is_anonymous else self.user.name

@@ -41,6 +41,7 @@ class VotingResultItemResponse(BaseModel):
     title: str
     votes_count: int
     approval_percent: int
+    user_voted: bool = False
 
 
 class VotingResultsResponse(BaseModel):

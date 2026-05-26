@@ -8,6 +8,8 @@
     </header>
 
     <form class="settings-grid" @submit.prevent="save">
+      <p v-if="saved" class="form-message success span-2">Настройки сохранены.</p>
+
       <label class="field">
         Название доски
         <input v-model="form.title" />
@@ -16,11 +18,6 @@
       <label class="field span-2">
         Описание
         <textarea v-model="form.description"></textarea>
-      </label>
-
-      <label class="field span-2">
-        Контекст доски
-        <textarea v-model="form.context"></textarea>
       </label>
 
       <label class="checkbox-field">
@@ -35,6 +32,20 @@
 
       <button class="button primary">сохранить</button>
     </form>
+
+    <section class="telegram-panel">
+      <div>
+        <h3>Telegram-чат</h3>
+        <p>Добавьте бота в общий чат и отправьте эту команду. Писать должен админ доски.</p>
+      </div>
+
+      <div class="code-box">{{ bindCommand }}</div>
+
+      <button class="button ghost" type="button" @click="copyBindCommand">
+        {{ copied ? 'скопировано' : 'скопировать команду' }}
+      </button>
+      <p v-if="copyError" class="form-message error">{{ copyError }}</p>
+    </section>
 
     <section class="transfer-panel">
       <h3>Передача прав администратора</h3>
@@ -54,10 +65,11 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 
 const props = defineProps({
   board: { type: Object, required: true },
+  saved: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['save', 'transfer-admin'])
@@ -65,19 +77,20 @@ const emit = defineEmits(['save', 'transfer-admin'])
 const form = reactive({
   title: props.board.title,
   description: props.board.description,
-  context: props.board.context,
   allowAnonymous: props.board.allowAnonymous,
   autoApprove: props.board.autoApprove,
 })
 
 const newAdminId = ref(props.board.members.find((m) => m.role === 'admin')?.id)
+const copied = ref(false)
+const copyError = ref('')
+const bindCommand = computed(() => `/bind ${props.board.id}`)
 
 watch(
   () => props.board,
   (board) => {
     form.title = board.title
     form.description = board.description
-    form.context = board.context
     form.allowAnonymous = board.allowAnonymous
     form.autoApprove = board.autoApprove
     newAdminId.value = board.members.find((m) => m.role === 'admin')?.id
@@ -87,5 +100,20 @@ watch(
 
 function save() {
   emit('save', { ...form })
+}
+
+async function copyBindCommand() {
+  copyError.value = ''
+
+  try {
+    if (!navigator.clipboard) throw new Error()
+    await navigator.clipboard.writeText(bindCommand.value)
+    copied.value = true
+    window.setTimeout(() => {
+      copied.value = false
+    }, 1800)
+  } catch {
+    copyError.value = 'не получилось скопировать, выделите команду вручную'
+  }
 }
 </script>

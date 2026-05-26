@@ -84,6 +84,9 @@ class BoardsQueries:
                 selectinload(BoardMember.board)
                 .selectinload(Board.ideas)
                 .selectinload(Idea.idea_status),
+                selectinload(BoardMember.board)
+                .selectinload(Board.ideas)
+                .selectinload(Idea.user),
                 selectinload(BoardMember.user_role),
             )
             .where(
