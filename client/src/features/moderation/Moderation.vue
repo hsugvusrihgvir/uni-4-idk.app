@@ -15,8 +15,12 @@
         </button>
 
         <div class="list-actions">
-          <button class="button primary" @click="$emit('approve', idea.id)">одобрить</button>
-          <button class="button ghost" @click="$emit('reject', idea)">отклонить</button>
+          <button class="button primary" :disabled="busyIds.includes(idea.id)" @click="$emit('approve', idea.id)">
+            одобрить
+          </button>
+          <button class="button ghost" :disabled="busyIds.includes(idea.id)" @click="$emit('reject', idea)">
+            отклонить
+          </button>
         </div>
       </article>
     </div>
@@ -34,6 +38,7 @@ import Empty from '../../components/ui/Empty.vue'
 
 defineProps({
   ideas: { type: Array, default: () => [] },
+  busyIds: { type: Array, default: () => [] },
 })
 
 defineEmits(['open', 'approve', 'reject'])

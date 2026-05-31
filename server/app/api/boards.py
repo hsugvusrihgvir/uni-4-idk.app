@@ -28,10 +28,19 @@ def create_board(body: BoardCreateRequest, cur: User = Depends(get_current_user)
 
 @router.get("", response_model=BoardsListResponse)
 def get_boards(cur: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    members = BoardsService(db).get_my_boards(current_user=cur)
+    service = BoardsService(db)
+    members = service.get_my_boards(current_user=cur)
+    counts = service.get_my_boards_counts(members=members)
     return BoardsListResponse(
         items=[
-            BoardItemResponse(id=m.board.id, title=m.board.title, description=m.board.description, role=m.role)
+            BoardItemResponse(
+                id=m.board.id,
+                title=m.board.title,
+                description=m.board.description,
+                role=m.role,
+                ideas_count=counts.get(m.board.id, {}).get("ideas_count", 0),
+                members_count=counts.get(m.board.id, {}).get("members_count", 0),
+            )
             for m in members
         ]
     )
@@ -69,6 +78,8 @@ def join_board(board_id: UUID, cur: User = Depends(get_current_user), db: Sessio
         title=member.board.title,
         description=member.board.description,
         role=member.role,
+        ideas_count=len(member.board.ideas) if getattr(member.board, "ideas", None) is not None else 0,
+        members_count=len(member.board.members) if getattr(member.board, "members", None) is not None else 1,
     )
 
 

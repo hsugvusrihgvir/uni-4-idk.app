@@ -31,6 +31,8 @@ class BoardItemResponse(BaseModel):
     title: str
     description: str | None
     role: str
+    ideas_count: int = 0
+    members_count: int = 0
 
 
 class BoardsListResponse(BaseModel):

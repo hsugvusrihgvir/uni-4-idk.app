@@ -1,5 +1,5 @@
 ﻿from uuid import UUID
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.db.models import Board, BoardMember, Idea, UserRole
@@ -76,6 +76,34 @@ class BoardsQueries:
             .order_by(BoardMember.created_at.desc())
         )
         return list(self.db.execute(stmt).scalars().all())
+
+    def get_my_boards_counts(self, *, board_ids: list[UUID]) -> dict[UUID, dict[str, int]]:
+        if not board_ids:
+            return {}
+
+        ideas_stmt = (
+            select(Idea.board_id, func.count(Idea.id))
+            .where(Idea.board_id.in_(board_ids))
+            .group_by(Idea.board_id)
+        )
+        members_stmt = (
+            select(BoardMember.board_id, func.count(BoardMember.id))
+            .where(BoardMember.board_id.in_(board_ids))
+            .group_by(BoardMember.board_id)
+        )
+
+        result = {
+            board_id: {"ideas_count": 0, "members_count": 0}
+            for board_id in board_ids
+        }
+
+        for board_id, count in self.db.execute(ideas_stmt).all():
+            result[board_id]["ideas_count"] = count
+
+        for board_id, count in self.db.execute(members_stmt).all():
+            result[board_id]["members_count"] = count
+
+        return result
 
     def get_by_id_for_user(self, *, board_id: UUID, user_id: UUID) -> BoardMember | None:
         stmt = (

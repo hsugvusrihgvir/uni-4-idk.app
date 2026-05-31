@@ -50,7 +50,7 @@ class IdeasService:
 
         return self.q_i.get_by_board(board_id=board_id)
 
-    def delete(self, *, current_user: User, idea_id: UUID) -> None:
+    def delete(self, *, current_user: User, idea_id: UUID) -> UUID:
         idea = self.q_i.get_by_id(idea_id=idea_id)
 
         if idea is None:
@@ -61,4 +61,6 @@ class IdeasService:
         if idea.user_id != current_user.id and (member is None or member.role not in {"admin", "moderator"}):
             raise PermissionError("Only author can delete idea")
 
+        board_id = idea.board_id
         self.q_i.delete(idea)
+        return board_id

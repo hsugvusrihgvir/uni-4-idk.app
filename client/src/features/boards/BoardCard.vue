@@ -22,7 +22,7 @@
       </div>
 
       <div>
-        <strong>{{ board.members?.length || 0 }}</strong>
+        <strong>{{ board.membersCount ?? board.members?.length ?? 0 }}</strong>
         <span>участников</span>
       </div>
     </footer>

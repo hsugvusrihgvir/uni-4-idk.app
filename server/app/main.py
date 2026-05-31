@@ -1,11 +1,21 @@
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.api import auth, board_admin, boards, health, idea_ws, ideas, moderation, notifications, telegram, users, votings
+from app.db.models import Base
+from app.db.session import engine
 
-app = FastAPI(title="idk.app API", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="idk.app API", version="0.1.0", lifespan=lifespan)
 BASE_DIR = Path(__file__).resolve().parents[1]
 UPLOAD_DIR = BASE_DIR / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)

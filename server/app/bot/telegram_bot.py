@@ -50,7 +50,7 @@ def idea_keyboard(token: str) -> InlineKeyboardMarkup:
 @dp.message(Command("start", "help"))
 async def help_message(message: Message) -> None:
     await message.answer(
-        "привет. я бот для идей с доски.\n\n"
+        "привет. я бот для брейншторминга.\n\n"
         "как начать:\n"
         "1. на сайте открой профиль и получи код telegram\n"
         "2. напиши мне в личку /link код\n"

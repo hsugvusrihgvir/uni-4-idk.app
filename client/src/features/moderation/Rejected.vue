@@ -14,7 +14,9 @@
         <p class="reason-box">Причина: {{ idea.rejectionReason }}</p>
 
         <div class="card-actions">
-          <button class="button primary" @click.stop="$emit('approve', idea.id)">одобрить</button>
+          <button class="button primary" :disabled="busyIds.includes(idea.id)" @click.stop="$emit('approve', idea.id)">
+            одобрить
+          </button>
           <button class="text-danger" @click.stop="$emit('remove', idea.id)">удалить</button>
         </div>
       </article>
@@ -33,6 +35,7 @@ import Empty from '../../components/ui/Empty.vue'
 
 defineProps({
   ideas: { type: Array, default: () => [] },
+  busyIds: { type: Array, default: () => [] },
 })
 
 defineEmits(['open', 'approve', 'remove'])

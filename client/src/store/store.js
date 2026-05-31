@@ -61,6 +61,8 @@ function mapBoard(board) {
     allowAnonymous: board.anon_ideas ?? true,
     autoApprove: board.moderation === undefined ? false : !board.moderation,
     members: board.members || [],
+    membersCount: board.members_count ?? board.members?.length ?? 0,
+    ideasCount: board.ideas_count ?? board.ideas?.length ?? 0,
     createdAt: formatDate(board.created_at),
   }
 }
@@ -124,6 +126,15 @@ function upsertIdea(idea) {
   const mapped = mapIdea(idea, idea.board_id)
   state.ideas = [mapped, ...state.ideas.filter((item) => item.id !== mapped.id)]
   return mapped
+}
+
+function updateBoardIdeasCount(boardId) {
+  const board = state.boards.find((item) => item.id === boardId)
+  if (board) {
+    board.ideasCount = state.ideas.filter(
+      (idea) => idea.boardId === boardId && idea.status === 'approved'
+    ).length
+  }
 }
 
 function setError(error) {
@@ -245,7 +256,7 @@ export function useStore() {
       anon_ideas: form.anon_ideas ?? form.allowAnonymous ?? true,
     })
 
-    const board = mapBoard({ ...data, role: 'admin' })
+    const board = mapBoard({ ...data, role: 'admin', ideas_count: 0, members_count: 1 })
     state.boards.unshift(board)
     return board
   }
@@ -262,7 +273,9 @@ export function useStore() {
     const members = await boardReq.getMembers(boardId).catch(() => ({ items: [] }))
     const board = mapBoard(data)
     board.members = members.items.map(mapMember)
+    board.membersCount = board.members.length
     const ideas = (data.ideas || []).map((idea) => mapIdea(idea, board.id))
+    board.ideasCount = ideas.length
 
     state.boards = [board, ...state.boards.filter((item) => item.id !== board.id)]
     state.ideas = [...state.ideas.filter((idea) => idea.boardId !== board.id), ...ideas]
@@ -299,6 +312,7 @@ export function useStore() {
     const ideas = data.items.map((idea) => mapIdea(idea, boardId))
 
     state.ideas = [...state.ideas.filter((idea) => idea.boardId !== boardId), ...ideas]
+    updateBoardIdeasCount(boardId)
     return ideas
   }
 
@@ -308,7 +322,9 @@ export function useStore() {
     const ids = new Set(ideas.map((idea) => idea.id))
 
     state.ideas = [
-      ...state.ideas.filter((idea) => idea.boardId !== boardId || !ids.has(idea.id)),
+      ...state.ideas.filter(
+        (idea) => idea.boardId !== boardId || (idea.status !== 'pending' && !ids.has(idea.id))
+      ),
       ...ideas,
     ]
     return ideas
@@ -328,17 +344,23 @@ export function useStore() {
 
     const idea = mapIdea(data, boardId)
     state.ideas = [idea, ...state.ideas.filter((item) => item.id !== idea.id)]
+    updateBoardIdeasCount(boardId)
     return idea
   }
 
   async function deleteIdea(ideaId) {
+    const idea = state.ideas.find((item) => item.id === ideaId)
     await ideaReq.deleteIdea(ideaId)
     state.ideas = state.ideas.filter((idea) => idea.id !== ideaId)
+    if (idea) updateBoardIdeasCount(idea.boardId)
   }
 
   async function approveIdea(ideaId) {
     const data = await ideaReq.updateIdeaStatus(ideaId, { status: 'approved' })
-    return upsertIdea(data)
+    const idea = upsertIdea({ ...data, status: 'approved' })
+    updateBoardIdeasCount(idea.boardId)
+    await loadVotingResults(idea.boardId).catch(() => [])
+    return idea
   }
 
   async function rejectIdea(ideaId, reason) {
@@ -346,8 +368,10 @@ export function useStore() {
       status: 'rejected',
       rejection_reason: reason || labels.rejectReason,
     })
-    const idea = upsertIdea(data)
+    const idea = upsertIdea({ ...data, status: 'rejected' })
     idea.rejectionReason = reason || labels.rejectReason
+    updateBoardIdeasCount(idea.boardId)
+    await loadVotingResults(idea.boardId).catch(() => [])
     return idea
   }
 
@@ -376,6 +400,7 @@ export function useStore() {
 
     const member = await boardReq.addMember(boardId, { username: username.trim(), role: 'member' })
     board.members = [mapMember(member), ...board.members.filter((item) => item.id !== member.id)]
+    board.membersCount = board.members.length
   }
 
   async function removeMember(boardId, memberId) {
@@ -384,6 +409,7 @@ export function useStore() {
 
     await boardReq.deleteMember(boardId, memberId)
     board.members = board.members.filter((item) => item.id !== memberId)
+    board.membersCount = board.members.length
   }
 
   async function toggleModerator(boardId, memberId) {
@@ -477,7 +503,15 @@ export function useStore() {
     const ws = new WebSocket(ideaReq.getIdeasWsUrl(boardId, state.auth.accessToken))
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data)
-      if (msg.type === 'idea_created') upsertIdea(msg.idea)
+      if (msg.type === 'idea_created' || msg.type === 'idea_updated') {
+        const idea = upsertIdea(msg.idea)
+        updateBoardIdeasCount(idea.boardId)
+      }
+      if (msg.type === 'idea_deleted') {
+        const oldIdea = state.ideas.find((idea) => idea.id === msg.idea_id)
+        state.ideas = state.ideas.filter((idea) => idea.id !== msg.idea_id)
+        if (oldIdea) updateBoardIdeasCount(oldIdea.boardId)
+      }
     }
     ws.onclose = () => {
       if (state.ws[boardId] === ws) delete state.ws[boardId]

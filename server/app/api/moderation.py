@@ -1,12 +1,14 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_user
 from app.db.models import User
 from app.db.session import get_db
 from app.schemas.ideas import IdeaResponse, IdeasListResponse, IdeaStatusUpdateRequest
+from app.services.idea_ws import ideas_ws
 from app.services.moderation import ModerationService
 
 router = APIRouter(tags=["Moderation"])
@@ -29,7 +31,7 @@ def get_moderation_ideas(
 
 
 @router.patch("/api/v1/ideas/{idea_id}/status", response_model=IdeaResponse)
-def update_idea_status(
+async def update_idea_status(
     idea_id: UUID,
     body: IdeaStatusUpdateRequest,
     cur: User = Depends(get_current_user),
@@ -42,4 +44,13 @@ def update_idea_status(
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
-    return IdeaResponse.model_validate(idea)
+    data = IdeaResponse.model_validate(idea)
+    await ideas_ws.broadcast(
+        board_id=idea.board_id,
+        data={
+            "type": "idea_updated",
+            "idea": jsonable_encoder(data),
+        },
+    )
+
+    return data

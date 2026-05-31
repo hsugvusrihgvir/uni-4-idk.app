@@ -91,6 +91,14 @@ class FakeBoardsService:
         )
         return [SimpleNamespace(board=board, role="admin")]
 
+    def get_my_boards_counts(self, *, members):
+        return {
+            UUID("22222222-2222-2222-2222-222222222222"): {
+                "ideas_count": 1,
+                "members_count": 2,
+            }
+        }
+
     def get_board(self, *, current_user, board_id):
         if self.get_error:
             raise ValueError(self.get_error)
@@ -451,14 +459,16 @@ def test_get_boards(client):
     assert response.status_code == 200
     assert response.json() == {
         "items": [
-            {
-                "id": "22222222-2222-2222-2222-222222222222",
-                "title": "Board 1",
-                "description": "description",
-                "role": "admin",
-            }
-        ]
-    }
+                {
+                    "id": "22222222-2222-2222-2222-222222222222",
+                    "title": "Board 1",
+                    "description": "description",
+                    "role": "admin",
+                    "ideas_count": 1,
+                    "members_count": 2,
+                }
+            ]
+        }
 
 
 @pytest.mark.parametrize(

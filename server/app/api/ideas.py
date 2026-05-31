@@ -44,14 +44,22 @@ async def create_idea(
 
 
 @router.delete("/{idea_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_idea(
+async def delete_idea(
     idea_id: UUID,
     cur: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     try:
-        IdeasService(db).delete(current_user=cur, idea_id=idea_id)
+        board_id = IdeasService(db).delete(current_user=cur, idea_id=idea_id)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except PermissionError as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+    await ideas_ws.broadcast(
+        board_id=board_id,
+        data={
+            "type": "idea_deleted",
+            "idea_id": str(idea_id),
+        },
+    )

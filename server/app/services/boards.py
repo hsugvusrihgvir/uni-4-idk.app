@@ -28,6 +28,9 @@ class BoardsService:
     def get_my_boards(self, *, current_user: User) -> list[BoardMember]:
         return self.q_b.get_my_boards(user_id=current_user.id)
 
+    def get_my_boards_counts(self, *, members: list[BoardMember]) -> dict:
+        return self.q_b.get_my_boards_counts(board_ids=[member.board.id for member in members])
+
     def get_board(self, *, current_user: User, board_id) -> BoardMember:
         member = self.q_b.get_by_id_for_user(board_id=board_id, user_id=current_user.id)
 

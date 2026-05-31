@@ -33,7 +33,7 @@
         v-for="board in shownBoards"
         :key="board.id"
         :board="board"
-        :ideas-count="getBoardIdeas(board.id).length"
+        :ideas-count="board.ideasCount"
         @open="$emit('open-board', $event)"
         @remove="deleteBoard"
       />
@@ -77,7 +77,6 @@ const {
   loadBoards,
   createBoard,
   deleteBoard,
-  getBoardIdeas,
   loadNotifications,
   deleteNotification,
 } = useStore()

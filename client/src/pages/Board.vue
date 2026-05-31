@@ -62,16 +62,18 @@
       <Moderation
         v-else-if="tab === 'moderation' && canModerate"
         :ideas="pendingIdeas"
+        :busy-ids="busyIdeaIds"
         @open="idea = $event"
-        @approve="approveIdea"
+        @approve="approveIdeaOnce"
         @reject="rejectIdeaItem = $event"
       />
 
       <Rejected
         v-else-if="tab === 'rejected' && canModerate"
         :ideas="rejectedIdeas"
+        :busy-ids="busyIdeaIds"
         @open="idea = $event"
-        @approve="approveIdea"
+        @approve="approveIdeaOnce"
         @remove="askDeleteIdea"
       />
 
@@ -188,6 +190,7 @@ const rejectIdeaItem = ref(null)
 const profileUser = ref(null)
 const settingsSaved = ref(false)
 const confirm = ref(null)
+const busyIdeaIds = ref([])
 
 const navItems = [
   { id: 'ideas', title: 'Идеи' },
@@ -240,6 +243,28 @@ async function saveIdea(form) {
   ideaOpen.value = false
 }
 
+async function runIdeaAction(ideaId, action) {
+  if (busyIdeaIds.value.includes(ideaId)) return null
+
+  const oldIdea = ideas.value.find((item) => item.id === ideaId)
+  if (!oldIdea) return null
+
+  busyIdeaIds.value = [...busyIdeaIds.value, ideaId]
+  try {
+    const updatedIdea = await action()
+    if (idea.value?.id === ideaId && updatedIdea) {
+      idea.value = updatedIdea
+    }
+    return updatedIdea
+  } finally {
+    busyIdeaIds.value = busyIdeaIds.value.filter((id) => id !== ideaId)
+  }
+}
+
+async function approveIdeaOnce(ideaId) {
+  return runIdeaAction(ideaId, () => approveIdea(ideaId))
+}
+
 async function saveVoting(type) {
   await createVoting(props.boardId, type)
   votingCreateOpen.value = false
@@ -252,6 +277,8 @@ function askDeleteIdea(ideaId) {
     confirmText: 'удалить идею',
     action: async () => {
       await deleteIdea(ideaId)
+      if (idea.value?.id === ideaId) idea.value = null
+      if (rejectIdeaItem.value?.id === ideaId) rejectIdeaItem.value = null
       confirm.value = null
     },
   }
@@ -270,8 +297,10 @@ function askDeleteVoting(votingId) {
 }
 
 async function saveReject(ideaId, reason) {
-  await rejectIdea(ideaId, reason)
-  rejectIdeaItem.value = null
+  await runIdeaAction(ideaId, () => rejectIdea(ideaId, reason))
+  if (rejectIdeaItem.value?.id === ideaId) {
+    rejectIdeaItem.value = null
+  }
 }
 
 async function saveSettings(form) {

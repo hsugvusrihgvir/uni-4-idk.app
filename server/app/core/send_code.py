@@ -38,6 +38,7 @@ def send_auth_code(email: str, code: str) -> None:
     )
 
     try:
+        print(code)
         with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as server:
             server.login(MAIL_USERNAME, MAIL_KEY)
             server.send_message(msg)
