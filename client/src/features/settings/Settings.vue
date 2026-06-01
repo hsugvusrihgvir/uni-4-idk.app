@@ -37,6 +37,9 @@
       <div>
         <h3>Telegram-чат</h3>
         <p>Добавьте бота в общий чат и отправьте эту команду. Писать должен админ доски.</p>
+        <a class="telegram-link" href="https://t.me/idkapp_bot" target="_blank" rel="noopener noreferrer">
+          @idkapp_bot
+        </a>
       </div>
 
       <div class="code-box">{{ bindCommand }}</div>

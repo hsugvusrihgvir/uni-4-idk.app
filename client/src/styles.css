@@ -763,6 +763,19 @@ textarea {
   color: var(--muted);
 }
 
+.telegram-link {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 8px;
+  color: var(--accent);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.telegram-link:hover {
+  text-decoration: underline;
+}
+
 .code-box {
   padding: 12px 14px;
   border-radius: 16px;

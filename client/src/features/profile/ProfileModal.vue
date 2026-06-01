@@ -38,6 +38,9 @@
           <h3>Telegram</h3>
           <p v-if="form.tg_id">аккаунт уже привязан</p>
           <p v-else>Получите код и отправьте его боту командой `/link код`.</p>
+          <a class="telegram-link" href="https://t.me/idkapp_bot" target="_blank" rel="noopener noreferrer">
+            @idkapp_bot
+          </a>
         </div>
 
         <div v-if="telegramCode" class="code-box">
