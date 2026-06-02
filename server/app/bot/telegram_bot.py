@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 from pathlib import Path
 from uuid import UUID, uuid4
@@ -16,9 +17,22 @@ load_dotenv(BASE_DIR / ".env")
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 BOT_SECRET = os.getenv("TELEGRAM_BOT_SECRET")
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
+RECONNECT_DELAY_SECONDS = int(os.getenv("TELEGRAM_RECONNECT_DELAY_SECONDS", "10"))
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 dp = Dispatcher()
 pending_ideas: dict[str, dict] = {}
+
+
+def load_bot_settings() -> None:
+    global API_URL, BOT_SECRET, BOT_TOKEN
+
+    load_dotenv(BASE_DIR / ".env", override=True)
+    BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+    BOT_SECRET = os.getenv("TELEGRAM_BOT_SECRET")
+    API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 
 
 def api_headers() -> dict:
@@ -195,13 +209,30 @@ async def save_idea(callback: CallbackQuery) -> None:
 
 
 async def main() -> None:
-    if not BOT_TOKEN:
-        raise RuntimeError("TELEGRAM_BOT_TOKEN is not set")
-    if not BOT_SECRET:
-        raise RuntimeError("TELEGRAM_BOT_SECRET is not set")
+    while True:
+        load_bot_settings()
+        if not BOT_TOKEN or not BOT_SECRET:
+            logger.warning(
+                "Telegram bot settings are incomplete. Retrying in %s seconds",
+                RECONNECT_DELAY_SECONDS,
+            )
+            await asyncio.sleep(RECONNECT_DELAY_SECONDS)
+            continue
 
-    bot = Bot(BOT_TOKEN)
-    await dp.start_polling(bot)
+        bot = Bot(BOT_TOKEN)
+        try:
+            logger.info("Starting Telegram bot polling")
+            await dp.start_polling(bot)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception(
+                "Telegram bot polling failed. Retrying in %s seconds",
+                RECONNECT_DELAY_SECONDS,
+            )
+            await asyncio.sleep(RECONNECT_DELAY_SECONDS)
+        finally:
+            await bot.session.close()
 
 
 if __name__ == "__main__":
