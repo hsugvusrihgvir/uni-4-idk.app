@@ -1,89 +1,82 @@
 # idk.app
 
-
-Веб-приложение для сбора, модерации и отбора идей на досках. Пользователи могут создавать доски, добавлять идеи, участвовать в голосованиях и получать уведомления. Для администраторов и модераторов доступны управление участниками, настройками доски и статусами идей.
-
-## Стек
-
-- Frontend: Vue 3, Vite, Vitest
-- Backend: FastAPI, SQLAlchemy, PostgreSQL
-- Авторизация: JWT access/refresh tokens
-- Дополнительно: Telegram-бот для привязки аккаунта и добавления идей из чата
+Веб-приложение для брейншторма: команды создают доски, собирают идеи, модерируют предложения, голосуют и сохраняют лучшие варианты в отчёт.
 
 
-```text
-client/   frontend-приложение
-server/   backend-приложение
+- регистрация и вход по email-коду;
+- создание досок для брейншторма;
+- добавление и поиск идей;
+- модерация идей перед публикацией;
+- роли участников: пользователь, модератор, администратор;
+- управление участниками доски;
+- голосования по идеям и просмотр результатов;
+- уведомления о событиях на досках;
+- профиль пользователя и привязка Telegram-аккаунта;
+- добавление идей через Telegram-бота;
+- экспорт отобранных идей в HTML-отчёт.
+
+## Технологии
+
+Frontend: Vue 3, Vite, Vitest  
+Backend: FastAPI, SQLAlchemy, PostgreSQL  
+Auth: JWT access/refresh tokens  
+Integrations: email-коды, Telegram bot  
+
+## Быстрый запуск через Docker
+
+```powershell
+copy server\.env.example server\.env
+docker compose up -d --build
+```
+
+После запуска:
+
+- приложение: http://localhost:5173
+- API: http://localhost:8000
+- Swagger: http://localhost:8000/docs
+- healthcheck: http://localhost:8000/api/v1/health/
+
+Остановить контейнеры:
+
+```powershell
+docker compose down
 ```
 
 ## Переменные окружения
 
-Пример:
+Основной пример лежит в `server/.env.example`.
 
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_NAME=idk_app
 
-SECRET_KEY=change_me
-API_URL=http://127.0.0.1:8000
+## Telegram-бот
 
-TELEGRAM_BOT_TOKEN=
-TELEGRAM_BOT_SECRET=change_me
+чтобы участники могли добавлять идеи прямо из Telegram-чата
 
-MAIL_USERNAME=
-MAIL_KEY=
-MAIL_FROM=
-SMTP_HOST=smtp.mail.ru
-SMTP_PORT=465
-```
-
-## Запуск backend
+Запуск вместе с приложением:
 
 ```powershell
-cd server
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+docker compose --profile bot up -d --build
 ```
 
-API будет доступно по адресу:
+Как работает сценарий:
 
-```text
-http://127.0.0.1:8000
-```
-
-Swagger-документация:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-## Запуск frontend
-
-```powershell
-cd client
-npm install
-npm run dev
-```
+1. пользователь получает код привязки в профиле;
+2. отправляет боту `/link код`;
+3. администратор добавляет бота в чат и выполняет `/bind id_доски`;
+4. участники отправляют идеи командой `/idea текст идеи`;
+5. идея попадает на доску или на модерацию.
 
 
+## Проверка
 
-```text
-http://127.0.0.1:5173
-```
-
-## Запуск Telegram-бота
-
-
-```powershell
-cd server
-python -m app.bot.telegram_bot
-```
-
-## Тесты backend
+Backend-тесты:
 
 ```powershell
 python -m pytest server/tests
+```
+
+Frontend-тесты:
+
+```powershell
+cd client
+npm run test
 ```

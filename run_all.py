@@ -20,13 +20,13 @@ def stream_output(name: str, process: subprocess.Popen) -> None:
         print(f"[{name}] {line}", end="", flush=True)
 
 
-def main() -> int:
+def main():
     processes: list[tuple[str, subprocess.Popen]] = []
 
     try:
         for name, cwd, command in PROCESSES:
             process = subprocess.Popen(
-                command,
+                command, 
                 cwd=cwd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
