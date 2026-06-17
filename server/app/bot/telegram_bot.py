@@ -66,9 +66,9 @@ async def help_message(message: Message) -> None:
     await message.answer(
         "привет. я бот для брейншторминга.\n\n"
         "как начать:\n"
-        "1. на сайте открой профиль и получи код telegram\n"
-        "2. напиши мне в личку /link код\n"
-        "3. добавь меня в общий чат\n"
+        "1. на сайте откройте профиль и получите код telegram\n"
+        "2. напишите мне в личку /link код\n"
+        "3. добавьте меня в общий чат\n"
         "4. админ доски пишет в чате /bind id_доски\n"
         "5. потом можно писать /idea текст идеи\n\n"
         "после /idea я попрошу подтвердить сохранение кнопкой."
@@ -84,7 +84,7 @@ async def link_user(message: Message, command: CommandObject) -> None:
         return
 
     if not code:
-        await message.answer("напиши так: /link 123456")
+        await message.answer("напишите так: /link 123456")
         return
 
     try:
@@ -116,7 +116,7 @@ async def bind_chat(message: Message, command: CommandObject) -> None:
     try:
         UUID(board_id)
     except ValueError:
-        await message.answer("напиши так: /bind uuid_доски")
+        await message.answer("напишите так: /bind uuid_доски")
         return
 
     try:
@@ -144,7 +144,7 @@ async def prepare_idea(message: Message, command: CommandObject) -> None:
     text = (command.args or "").strip()
 
     if not text:
-        await message.answer("напиши так: /idea текст идеи")
+        await message.answer("напишите так: /idea текст идеи")
         return
 
     token = uuid4().hex
